@@ -1,0 +1,595 @@
+/* ==========================
+   1. 页面滑动布局（修复版）
+========================== */
+.home,
+.homepage,
+.search-interface,
+.search-content {
+  width: 100%;
+  height: 100%;
+  background-color: #F7F7F7;
+}
+
+.homepage,
+.search-interface,
+.search-content {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s ease;
+  transform: translateX(100%);
+  z-index: 5;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 默认显示首页 */
+.homepage {
+  transform: translateX(0);
+  z-index: 10;
+}
+
+/* ==========================
+   2. 底部 footer 永久固定（修复！）
+========================== */
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100% !important;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  border-top: 1px solid #E3E3E5;
+  z-index: 999 !important;
+  background-color: #FFFFFF;
+}
+
+/* 给内容留出底部空间，不被footer挡住 */
+.home-article-list,
+.searcharticle-result-list,
+.searchuser-result-list {
+  padding-bottom: 70px !important;
+}
+
+/* ==========================
+   3. 搜索页面可滚动（修复！）
+========================== */
+.search-content {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 60px;
+}
+
+/* ==========================
+   以下是你原来的样式，保持不变
+========================== */
+.home-search {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  direction: column;
+  height: 10%;
+  width: 95%;
+  margin: 0 auto;
+  position: relative;
+}
+
+.home-search-left {
+  margin-left: 5%;
+  height: 35px;
+  width: 100%;
+  background-color: #EDEDED;
+  margin-top: 10px;
+  border-radius: 10px;
+}
+
+.home-search-left p {
+  font-size: 16px;
+  color: #666666;
+  margin-left: 50px;
+  margin-top: 8px;
+}
+
+.home-search-left i {
+  position: absolute;
+  top: 59%;
+  left: 10%;
+  font-size: 24px;
+  color: #999999;
+  transform: translate(-50%, -50%);
+}
+
+.home-search-left .icon {
+  width: 25%;
+  height: 25px;
+  background-color: #FEFEFE;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 57%;
+  right: 7%;
+  font-size: 16px;
+  color: #999999;
+  transform: translate(-50%, -50%);
+}
+
+.home-search-left .icon i {
+  font-size: 24px;
+  color: #6556FF;
+}
+
+.home-search-left .icon p {
+  font-size: 16px;
+  color: #666666;
+  margin-left: 5px;
+  margin-top: 2px;
+}
+
+.home-search-right {
+  width: 20%;
+  height: 100%;
+}
+
+.home-search-right img {
+  height: 27px;
+  color: #999999;
+  margin-left: 35px;
+  margin-top: 25px;
+  transform: translateX(-50%);
+}
+
+.home-headernav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  width: 95%;
+  margin: 0 auto;
+  border-bottom: 1px solid #999999;
+}
+
+.headernav-left {
+  width: 50%;
+  height: 100%;
+
+}
+
+.headernav-left ul {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.headernav-left ul li {
+  font-size: 16px;
+  color: #666666;
+  margin-top: 30px;
+  line-height: 10px;
+}
+
+.headernav-right {
+  width: 50%;
+  height: 100%;
+  position: relative;
+}
+
+.headernav-right i {
+  font-size: 20px;
+  color: #999999;
+  position: absolute;
+  top: 50%;
+  right: 5%;
+  transform: translate(-50%, -50%);
+  transform: rotate(45deg);
+}
+
+.home-article-item {
+  height: 20%;
+  width: 93%;
+  margin: 0 auto;
+}
+
+.home-article-item .title {
+  height: 30%;
+  width: 100%;
+}
+
+.home-article-item .title p {
+  font-size: 17px;
+  color: black;
+  line-height: 40px;
+}
+
+.home-article-item .actor {
+  height: 30%;
+  width: 40%;
+  display: flex;
+  text-align: left;
+}
+
+.home-article-item .actor img {
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+}
+
+.home-article-item .actor p {
+  font-size: 14px;
+  color: #666666;
+  line-height: 20px;
+  margin-left: 5px;
+}
+
+.home-article-item .content {
+  height: 40%;
+  width: 100%;
+}
+
+.home-article-item .content p {
+  font-size: 14px;
+  color: #575461;
+  line-height: 20px;
+}
+
+.home-article-item .information {
+  height: 30%;
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.home-article-item .information p {
+  font-size: 14px;
+  color: #666666;
+  line-height: 20px;
+}
+
+.home-article-item .information p:last-child {
+  margin-left: auto;
+}
+
+
+.footer div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 20%;
+  height: 100%;
+}
+
+.footer div span {
+  font-size: 25px;
+  color: #333;
+}
+
+.footer div p {
+  font-size: 13px;
+  color: #333;
+  line-height: 38px;
+  font-weight: normal;
+  margin: 0;
+  text-align: center;
+}
+
+.footer div:first-child p {
+  color: #FF4313;
+}
+
+.search-interface,
+.search-content {
+  height: 100%;
+  width: 100%;
+}
+
+.search-interface .header,
+.search-content .header {
+  height: 6%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.search-interface .header-left,
+.search-content .header-left {
+  width: 13%;
+  height: 100%;
+}
+
+.search-interface .header-left i,
+.search-content .header-left i {
+  font-size: 28px;
+  color: black;
+  margin-left: 10px;
+  margin-top: 70px;
+  transform: translate(-50%, -50px);
+  text-align: center;
+  line-height: 40px;
+}
+
+.search-interface .header-center,
+.search-content .header-center {
+  width: 70%;
+  height: 30px;
+  background-color: #EDEDED;
+  text-align: center;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.search-interface .header-center i,
+.search-content .header-center i {
+  font-size: 24px;
+  color: #999999;
+  margin-left: 5px;
+  margin-top: 3px;
+}
+
+.search-interface .header-center input,
+.search-content .header-center input {
+  height: 25px;
+  width: 100%;
+  background-color: #EDEDED;
+  font-size: 16px;
+}
+
+.search-interface .header-center input:focus,
+.search-content .header-center input:focus {
+  outline: none;
+}
+
+.search-interface .header-right,
+.search-content .header-right {
+  width: 20%;
+  height: 100%;
+}
+
+.search-interface .header-right p,
+.search-content .header-right p {
+  font-size: 15px;
+  color: black;
+  line-height: 40px;
+  text-align: center;
+}
+
+.search-interface .history-search,
+.search-content .history-search {
+  height: 88%;
+  width: 100%;
+}
+
+.history-search .history-search-title {
+  height: 10%;
+  width: 100%;
+  display: flex;
+}
+
+.history-search .history-search-title p {
+  font-size: 17px;
+  color: black;
+  line-height: 40px;
+  margin-left: 15px;
+  margin-top: 7px;
+}
+
+.history-search .history-search-title i {
+  font-size: 24px;
+  color: #999999;
+  text-align: center;
+  line-height: 40px;
+  margin-top: 7px;
+  margin-left: 250px;
+
+}
+
+.history-search .history-search-list {
+  width: 96%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.history-search .history-search-list-item {
+  height: 30px;
+  width: 28%;
+  background-color: #EDEDED;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  padding: 5px;
+  font-size: 16px;
+  color: black;
+}
+
+.history-search .history-search-list-item p {
+  font-size: 16px;
+
+}
+
+.history-search .history-search-list-item i {
+  font-size: 15px;
+
+}
+
+.search-content .nav {
+  height: 30px;
+  width: 100%;
+  border-bottom: 1px solid #F4F4F4;
+}
+
+.search-content .nav ul {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-content .nav ul li {
+  font-size: 16px;
+  color: #666666;
+  line-height: 30px;
+}
+
+.searcharticle-result-list-item {
+  height: 20%;
+  width: 93%;
+  margin: 0 auto;
+}
+
+.searcharticle-result-list-item .title {
+  height: 30%;
+  width: 100%;
+}
+
+.searcharticle-result-list-item .title p {
+  font-size: 17px;
+  color: black;
+  line-height: 40px;
+}
+
+.searcharticle-result-list-item .actor {
+  height: 30%;
+  width: 40%;
+  display: flex;
+  text-align: left;
+}
+
+.searcharticle-result-list-item .actor img {
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+}
+
+.searcharticle-result-list-item .actor p {
+  font-size: 14px;
+  color: #666666;
+  line-height: 20px;
+  margin-left: 5px;
+}
+
+.searcharticle-result-list-item .content {
+  height: 40%;
+  width: 100%;
+}
+
+.searcharticle-result-list-item .content p {
+  font-size: 14px;
+  color: #575461;
+  line-height: 20px;
+}
+
+.searcharticle-result-list-item .information {
+  height: 30%;
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.searcharticle-result-list-item .information p {
+  font-size: 14px;
+  color: #666666;
+  line-height: 20px;
+}
+
+.searcharticle-result-list-item .information p:last-child {
+  margin-left: auto;
+}
+
+.searchuser-result-list-item {
+  height: 15%;
+  width: 93%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.searchuser-result-list-item-left {
+  height: 100%;
+  width: 20%;
+}
+
+.searchuser-result-list-item-left img {
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 5px;
+}
+
+.searchuser-result-list-center {
+  height: 100%;
+  width: 60%;
+}
+
+.searchuser-result-list-center p:first-child {
+  font-size: 20px;
+  color: black;
+  line-height: 20px;
+}
+
+.searchuser-result-list-center p:last-child {
+  font-size: 16px;
+  color: #666666;
+  line-height: 16px;
+  margin-top: 7px;
+}
+
+.searchuser-result-list-right {
+  height: 100%;
+  width: 20%;
+}
+
+.searchuser-result-list-right button {
+  height: 30px;
+  width: 100%;
+  background-color: #EDEDED;
+  border-radius: 15px;
+  font-size: 16px;
+  color: black;
+  line-height: 30px;
+  text-align: center;
+}
+
+/* li切换颜色 */
+.nav-choose {
+  color: black !important;
+}
+
+.serachdiv-dismiss {
+  display: none !important;
+}
+
+.content-unchoose {
+  display: none !important;
+}
+
+.active-dismiss {
+  transform: translateX(100%);
+  z-index: 5 !important;
+}

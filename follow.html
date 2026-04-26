@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="./css/follow.css">
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./icofont1/iconfont.css">
+</head>
+
+<body>
+  <!-- 这是你的 HTML 结构 -->
+  <div class="search-container">
+    <input type="text" id="searchInput" placeholder="请输入关键词搜索...">
+    <button id="searchBtn">搜索</button>
+
+    <!-- 搜索结果列表 -->
+    <div class="search-results" id="searchResults"></div>
+
+    <!-- 分页控件 -->
+    <div class="pagination" id="pagination">
+      <button id="prevPage">上一页</button>
+      <span id="pageInfo">第 1 页</span>
+      <button id="nextPage">下一页</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    // ------------- 配置参数 -------------
+    const token = localStorage.getItem("token");
+    let currentPage = 1;      // 当前页码
+    const pageSize = 10;      // 每页显示数量（可修改）
+    let searchKeyword = '';   // 存储搜索关键词
+
+    // ------------- 获取 DOM 元素 -------------
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const resultsBox = document.getElementById('searchResults');
+    const pageInfo = document.getElementById('pageInfo');
+    const prevPage = document.getElementById('prevPage');
+    const nextPage = document.getElementById('nextPage');
+
+    // ------------- 核心方法 -------------
+
+    // 1. 搜索函数（包含分页）
+    function performSearch() {
+      searchKeyword = searchInput.value.trim();
+      if (!searchKeyword) {
+        alert("请输入搜索关键词！");
+        return;
+      }
+
+      // 显示加载状态
+      resultsBox.innerHTML = "<p>正在搜索...</p>";
+
+      axios({
+        method: "GET",
+        url: "/user/search",
+        baseURL: 'http://8.138.150.235:8585/cat', // 你的基础地址
+        headers: { token: token },
+        params: {
+          key: searchKeyword,  // 搜索关键词
+          page: currentPage,   // 当前页码
+          pageSize: pageSize   // 每页数量
+        }
+      }).then(res => {
+        if (res.data.code === 200) {
+          const data = res.data.data;
+          renderSearchResults(data.records); // 渲染列表
+          renderPagination(data);          // 渲染分页
+        } else {
+          resultsBox.innerHTML = "<p>搜索失败：" + res.data.msg + "</p>";
+        }
+      }).catch(err => {
+        console.error("搜索错误：", err);
+        resultsBox.innerHTML = "<p>搜索出错了！</p>";
+      });
+    }
+
+    // 2. 渲染搜索结果
+    function renderSearchResults(users) {
+      if (users.length === 0) {
+        resultsBox.innerHTML = "<p>没有找到相关用户</p>";
+        return;
+      }
+
+      resultsBox.innerHTML = "";
+      users.forEach(item => {
+        const introText = item.intro || "此人很懒，什么也没有写";
+        resultsBox.innerHTML += `
+        <div class="follow-content-item">
+          <div class="follow-content-avatar"></div>
+          <div class="follow-content-name">
+            <p>${item.username}</p>
+            <p>${introText}</p>
+          </div>
+          <div class="follow-content-follow">关注</div>
+        </div>
+      `;
+      });
+    }
+
+    // 3. 渲染分页信息
+    function renderPagination(pageData) {
+      const total = pageData.total; // 总条数
+      const totalPages = Math.ceil(total / pageSize); // 总页数
+
+      pageInfo.textContent = `第 ${currentPage} 页 / 共 ${totalPages} 页`;
+
+      // 禁用上一页/下一页逻辑
+      prevPage.disabled = currentPage === 1;
+      nextPage.disabled = currentPage === totalPages;
+    }
+
+    // ------------- 事件监听 -------------
+
+    // 搜索按钮点击
+    searchBtn.addEventListener('click', performSearch);
+
+    // 回车键搜索
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') performSearch();
+    });
+
+    // 上一页
+    prevPage.addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        performSearch();
+      }
+    });
+
+    // 下一页
+    nextPage.addEventListener('click', () => {
+      // 这里需要先判断总页数，我从接口数据里获取
+      // 为了安全，我们可以在 performSearch 里获取总页数后再决定是否翻页
+      // 简单处理：直接调用
+      performSearch();
+    });
+  </script>
+
+</body>
+
+
+
+</html>

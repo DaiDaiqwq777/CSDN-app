@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="./css/search.css">
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./icofont1/iconfont.css">
+</head>
+
+<body>
+  <div class="home ">
+    <div class="homepage">
+      <div class="home-search ">
+        <div class="home-search-left">
+          <i class="iconfont icon-sousuo"></i>
+          <p>搜索</p>
+          <div class="icon">
+            <i class="iconfont icon-c1"></i>
+            <p>AI 搜索</p>
+          </div>
+        </div>
+        <div class="home-search-right">
+          <img src="./img/圈-加.png" alt="">
+        </div>
+      </div>
+      <div class="home-headernav">
+        <div class="headernav-left">
+          <ul>
+            <li>关注</li>
+            <li>推荐</li>
+            <li>学生专区</li>
+          </ul>
+        </div>
+        <div class="headernav-right">
+          <i class="iconfont icon-cancel-1-copy"></i>
+        </div>
+      </div>
+      <div class="home-article-list">
+      </div>
+    </div>
+    <div class="search-interface ">
+      <div class="header">
+        <div class="header-left">
+          <i class="iconfont icon-xiangzuo1"></i>
+        </div>
+        <div class="header-center">
+          <i class="iconfont icon-sousuo"></i>
+          <input type="text" id="key2">
+        </div>
+        <div class="header-right">
+          <p>搜索</p>
+        </div>
+      </div>
+      <div class="history-search ">
+        <div class="history-search-title">
+          <p>历史搜索</p>
+          <i class="iconfont icon-lajixiang"></i>
+        </div>
+        <div class="history-search-list">
+        </div>
+      </div>
+    </div>
+    <div class="search-content">
+      <div class="header">
+        <div class="header-left">
+          <i class="iconfont icon-xiangzuo1"></i>
+        </div>
+        <div class="header-center">
+          <i class="iconfont icon-sousuo"></i>
+          <input type="text" id="search-content-key">
+        </div>
+        <div class="header-right">
+          <p>搜索</p>
+        </div>
+      </div>
+      <div class="nav">
+        <ul>
+          <li class="nav-choose">全部</li>
+          <li>C知道</li>
+          <li>博客</li>
+          <li>下载</li>
+          <li>用户</li>
+          <li>课程</li>
+          <li>问答</li>
+        </ul>
+      </div>
+      <div class="searcharticle-result-list ">
+
+      </div>
+      <div class="searchuser-result-list content-unchoose ">
+
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <div>
+      <span><i class="iconfont icon-shouye"></i></span>
+      <p>首页</p>
+    </div>
+    <div>
+      <span><i class="iconfont icon-xuexi"></i></span>
+      <p>学习</p>
+    </div>
+    <div>
+      <span><i class="iconfont icon-c"></i></span>
+      <p>C知道</p>
+    </div>
+    <div>
+      <span><i class="iconfont icon-xiaoxi"></i></span>
+      <p>消息</p>
+    </div>
+    <div>
+      <span><i class="iconfont icon-wode"></i></span>
+      <p>我的</p>
+    </div>
+  </div>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+  // ==========================
+  // 页面滑动跳转（修复版）
+  // ==========================
+  function goToPage(currentPage, nextPage) {
+    nextPage.style.transform = 'translateX(100%)';
+    nextPage.style.zIndex = '10';
+    nextPage.classList.remove('active-dismiss');
+    void nextPage.offsetWidth;
+    currentPage.style.transform = 'translateX(-100%)';
+    nextPage.style.transform = 'translateX(0)';
+  }
+
+  function backToPage(currentPage, prevPage) {
+    prevPage.style.zIndex = '10';
+    currentPage.style.zIndex = '5';
+    currentPage.style.transform = 'translateX(100%)';
+    prevPage.style.transform = 'translateX(0)';
+  }
+
+  // ==========================
+  // 路由跳转
+  // ==========================
+  // 主页 → 搜索页
+  document.querySelector(".home-search-left").addEventListener("click", function () {
+    const homePage = document.querySelector(".homepage");
+    const searchInterfacePage = document.querySelector(".search-interface");
+    const footer = document.querySelector(".footer");
+    footer.style.display = 'none';
+    goToPage(homePage, searchInterfacePage);
+  })
+
+  // 搜索页 → 主页
+  document.querySelector(".search-interface .header-left i").addEventListener("click", function () {
+    const homePage = document.querySelector(".homepage");
+    const searchInterfacePage = document.querySelector(".search-interface");
+    const footer = document.querySelector(".footer");
+    backToPage(searchInterfacePage, homePage);
+    footer.style.display = 'flex'; // ✅ 修复
+  })
+
+  // 搜索页 → 结果页（✅ 完美修复：自动填充搜索框 + 自动执行搜索）
+  document.querySelector(".search-interface .header-right").addEventListener("click", function () {
+    // 1. 获取历史搜索页的输入框内容（你的 id 是 key2）
+    const key = document.querySelector("#key2").value.trim();
+
+    if (!key) {
+      alert("请输入搜索内容");
+      return;
+    }
+
+    const searchInterfacePage = document.querySelector(".search-interface");
+    const searchContentPage = document.querySelector(".search-content");
+    const footer = document.querySelector(".footer");
+
+    footer.style.display = 'none';
+
+    // 2. 跳转到搜索结果页
+    goToPage(searchInterfacePage, searchContentPage);
+
+    // 3. ✅ 把关键词填到结果页的搜索框
+    document.querySelector("#search-content-key").value = key;
+
+    // 4. ✅ 延迟一点执行搜索（保证页面切换完成）
+    setTimeout(() => {
+      startSearch(key);
+    }, 300);
+
+    // 5. 清空上一页输入框
+    document.querySelector("#key2").value = "";
+  });
+
+  // 结果页 → 搜索页
+  document.querySelector(".search-content .header-left i").addEventListener("click", function () {
+    const searchContentPage = document.querySelector(".search-content");
+    const searchInterfacePage = document.querySelector(".search-interface");
+    backToPage(searchContentPage, searchInterfacePage);
+  })
+
+  // ==========================
+  // 首页随机文章
+  // ==========================
+  axios.defaults.baseURL = 'http://8.138.150.235:8585/cat';
+
+  window.onload = function () {
+    getRandomArticles();
+  };
+
+  function shuffle(arr) {
+    let newArr = [...arr];
+    for (let i = newArr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+    }
+    return newArr;
+  }
+
+  function getRandomArticles() {
+    axios.get("/article/search", {
+      params: { key: "", page: 1, pageSize: 20 }
+    }).then(res => {
+      const list = res.data.data.records || [];
+      const randomList = shuffle(list);
+      const box = document.querySelector(".home-article-list");
+      box.innerHTML = "";
+      randomList.forEach(item => {
+        box.innerHTML += `
+        <div class="home-article-item" data-id="${item.id}">
+          <div class="title"><p>${item.title || "无标题"}</p></div>
+          <div class="actor">
+            <img src="${item.userInfo?.avatar || './img/touxiang.jpg'}" alt="">
+            <p>${item.userInfo?.username || "未知用户"}</p>
+          </div>
+          <div class="content"><p>${item.content || "暂无简介"}</p></div>
+          <div class="information">
+            <p>${item.viewed || 0}阅读</p><p>0评论</p><p>${item.liked || 0}点赞</p><p>${item.createTime || ""}</p>
+          </div>
+        </div>`;
+      });
+    });
+  }
+  //点击文章查看详情
+  // 给所有文章项绑定点击事件（用事件委托，避免动态渲染失效）
+  document.querySelector(".home-article-list").addEventListener("click", function (e) {
+    const articleItem = e.target.closest(".home-article-item");
+    if (!articleItem) return;
+
+    const articleId = articleItem.dataset.id;
+    // 跳转到详情页，带文章ID参数
+    location.href = `article.html?id=${articleId}`;
+  });
+
+  document.querySelector(".searcharticle-result-list").addEventListener("click", function (e) {
+    const articleItem = e.target.closest(".searcharticle-result-list-item");
+    if (!articleItem) return;
+
+    const articleId = articleItem.dataset.id;
+    // 跳转到详情页，带文章ID参数
+    location.href = `article.html?id=${articleId}`;
+  });
+
+
+
+  // ==========================
+  // 搜索页逻辑（文章+用户）
+  // ==========================
+  document.querySelector(".footer div:last-child").addEventListener("click", function () {
+    location.href = "user.html";
+  })
+
+  let typenum = 1;
+  let currentPage = 1;
+  const pageSize = 10;
+  let keyword = "";
+  let isLoading = false;
+  let noMore = false;
+
+  // 导航切换
+  document.querySelector(".search-content .nav ul li:first-child").addEventListener("click", function (e) {
+    const userLi = document.querySelector(".search-content .nav ul li:nth-child(5)");
+    document.querySelector(".searcharticle-result-list").classList.remove("content-unchoose");
+    document.querySelector(".searchuser-result-list").classList.add("content-unchoose");
+    e.target.classList.add("nav-choose");
+    userLi.classList.remove("nav-choose");
+    typenum = 1; currentPage = 1; noMore = false;
+    //自动执行一次搜索
+    const key = document.querySelector("#search-content-key").value.trim();
+    if (key) {
+      startSearch(key);
+    }
+  });
+
+  document.querySelector(".search-content .nav ul li:nth-child(5)").addEventListener("click", function (e) {
+    const allLi = document.querySelector(".search-content .nav ul li:first-child");
+    document.querySelector(".searcharticle-result-list").classList.add("content-unchoose");
+    document.querySelector(".searchuser-result-list").classList.remove("content-unchoose");
+    e.target.classList.add("nav-choose");
+    allLi.classList.remove("nav-choose");
+    typenum = 5; currentPage = 1; noMore = false;
+    //自动执行一次搜索
+    const key = document.querySelector("#search-content-key").value.trim();
+    if (key) {
+      startSearch(key);
+    }
+  });
+
+  // 搜索
+  document.querySelector(".search-content .header-right p").addEventListener("click", startSearch);
+  document.querySelector("#search-content-key").addEventListener("keyup", (e) => {
+    const key = document.querySelector("#search-content-key").value.trim();
+    if (e.key === "Enter") startSearch(key);
+  });
+
+  function startSearch(key) {
+    // ✅ 强制从搜索框拿最新值，保证 key 一定正确
+    keyword = document.querySelector("#search-content-key").value.trim();
+
+    if (!keyword) {
+      alert("请输入搜索内容");
+      return;
+    }
+
+    currentPage = 1;
+    noMore = false;
+
+    if (typenum === 1) {
+      document.querySelector(".searcharticle-result-list").innerHTML = "";
+    } else {
+      document.querySelector(".searchuser-result-list").innerHTML = "";
+    }
+
+    loadData();
+  }
+
+  // 加载数据
+  function loadData() {
+    if (isLoading || noMore) return;
+    isLoading = true;
+
+    let box = typenum === 1
+      ? document.querySelector(".searcharticle-result-list")
+      : document.querySelector(".searchuser-result-list");
+
+    box.innerHTML += `<div class="loading" style="text-align:center;padding:15px;color:#999;">加载中...</div>`;
+
+    setTimeout(() => {
+      let url = typenum === 1 ? "/article/search" : "/user/search";
+      axios({
+        method: "GET", url, params: { key: keyword, page: currentPage, pageSize: pageSize }
+      }).then(res => {
+        document.querySelector(".loading")?.remove();
+        const list = res.data.data.records || [];
+
+
+        if (list.length === 0 && currentPage === 1) {
+          box.innerHTML = `<p style="padding:30px;text-align:center;">暂无搜索结果</p>`;
+          isLoading = false; noMore = true; return;
+        }
+
+        if (typenum === 1) {
+          list.forEach(item => {
+            box.innerHTML += `
+            <div class="searcharticle-result-list-item" data-id="${item.id}">
+              <div class="title"><p>${item.title || "无标题"}</p></div>
+              <div class="actor">
+                <img src="${item.userInfo?.avatar || './img/touxiang.jpg'}" alt="">
+                <p>${item.userInfo?.username || "未知用户"}</p>
+              </div>
+              <div class="content"><p>${item.content || "暂无简介"}</p></div>
+              <div class="information">
+                <p>${item.viewed || 0}阅读</p><p>0评论</p><p>${item.liked || 0}点赞</p><p>${item.createTime || ""}</p>
+              </div>
+            </div>`;
+          })
+        } else {
+          list.forEach(item => {
+            box.innerHTML += `
+            <div class="searchuser-result-list-item">
+              <div class="searchuser-result-list-item-left">
+                <img src="${item.avatar || './img/touxiang.jpg'}" alt="">
+              </div>
+              <div class="searchuser-result-list-center">
+                <p>${item.username || "未知用户"}</p>
+                <p>粉丝: ${item.fans || 0}</p>
+              </div>
+              <div class="searchuser-result-list-right">
+                <button>关注</button>
+              </div>
+            </div>`;
+          })
+        }
+
+        if (list.length < pageSize) {
+          noMore = true;
+          box.innerHTML += `<p style="text-align:center;padding:20px;">没有更多了</p>`;
+        }
+
+        currentPage++;
+        isLoading = false;
+      }).catch(() => {
+        document.querySelector(".loading")?.remove();
+        isLoading = false;
+      });
+    }, 500);
+    //每一次搜索，更新历史搜索信息
+    document.querySelector(".history-search-list").innerHTML += `<div class="history-search-list-item">
+            <p>${keyword} <i class="iconfont icon-cancel-1-copy"></i></p>
+          </div>`;
+  }
+  // ==========================
+  // ✅ 修复：滑到底加载（唯一的 onscroll）
+  // 统一下滑加载（修复版）
+  document.querySelector('.search-content').addEventListener('scroll', function () {
+    const st = this.scrollTop;
+    const sh = this.scrollHeight;
+    const ch = this.clientHeight;
+
+    if (st + ch >= sh - 200 && !isLoading && !noMore) {
+      loadData();
+    }
+  });
+</script>
+
+
+</body>
+
+</html>

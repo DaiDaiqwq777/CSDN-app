@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/login.css">
+  <link rel="stylesheet" href="./icofont/iconfont.css">
+  <title>Document</title>
+</head>
+
+<body>
+  <!-- 登录界面 -->
+  <div class="login ">
+    <!-- 1.返回图标 -->
+    <div class="login-back">
+      <div>
+        <i class="iconfont icon-jiantou_xianxing_zuo"></i>
+      </div>
+    </div>
+    <!-- 2.登录方式 -->
+    <div class="login-type">
+      <div>
+        <p>手机登录</p>
+      </div>
+      <div>
+        <p>账号登录</p>
+      </div>
+    </div>
+    <!-- 3.账号登录输入框 -->
+    <div class="login-account">
+      <input class="username" type="text" placeholder="用户名/邮箱/手机号">
+      <input class="password" type="password" placeholder="密码">
+      <a href="#" class="forget-password-text">忘记密码？</a>
+      <a href="#" class="account-register">没有账号?去注册</a>
+    </div>
+    <!-- 4.登录按钮 -->
+    <div class="login-btn">
+      <div class="agree-terms">
+        <input type="checkbox" id="terms" class>
+        <label for="terms">我已阅读并同意《<a href="#">用户服务条款</a>》与《<a href="#">隐私协议</a>》</label>
+      </div>
+      <button>登录</button>
+    </div>
+    <!-- 5.登录失败弹窗 -->
+    <div class="login-popup">
+      <div>
+        <p>登录失败！</p>
+      </div>
+    </div>
+    <!-- 6.其他登录方式 -->
+    <div class="login-bottom">
+      <div>其他登录方式</div>
+      <div class="login-bottom-icon">
+        <i class="iconfont icon-douyin"></i>
+        <i class="iconfont icon-weixin"></i>
+        <i class="iconfont icon-QQ"></i>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 帐号注册界面 -->
+  <div class="register login-dismiss">
+    <!-- 1.返回图标 -->
+    <div class="register-back">
+      <div>
+        <i class="iconfont icon-jiantou_xianxing_zuo"></i>
+      </div>
+    </div>
+    <!-- 2.登录方式 -->
+    <div class="login-type">
+      <div class="register-text">
+        <p>账号注册</p>
+      </div>
+    </div>
+    <!-- 3.账号登录输入框 -->
+    <div class="register-account">
+      <input class="username" type="text" placeholder="用户名/邮箱/手机号">
+      <input class="password" type="password" placeholder="密码">
+      <input class="confirm-password" type="password" placeholder="确认密码">
+    </div>
+    <!-- 4.注册按钮 -->
+    <div class="register-btn">
+      <div class="agree-terms">
+        <input type="checkbox" id="terms" class>
+        <label for="terms">我已阅读并同意《<a href="#">用户服务条款</a>》与《<a href="#">隐私协议</a>》</label>
+      </div>
+      <button>注册</button>
+    </div>
+    <!-- 5.登录失败弹窗 -->
+    <div class="login-popup">
+      <div>
+        <p>登录失败！</p>
+      </div>
+    </div>
+    <!-- 6.其他登录方式 -->
+    <div class="login-bottom">
+      <div>其他登录方式</div>
+      <div class="login-bottom-icon">
+        <i class="iconfont icon-douyin"></i>
+        <i class="iconfont icon-weixin"></i>
+        <i class="iconfont icon-QQ"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- 忘记密码界面 -->
+  <div class="forget login-dismiss">
+    <!-- 1.返回图标 -->
+    <div class="forget-back">
+      <div>
+        <i class="iconfont icon-jiantou_xianxing_zuo"></i>
+      </div>
+    </div>
+    <!-- 2.登录方式 -->
+    <div class="login-type">
+      <div class="forget-text">
+        <p>忘记密码</p>
+      </div>
+    </div>
+    <!-- 3.账号登录输入框 -->
+    <div class="forget-account">
+      <input class="username" type="text" placeholder="用户名/邮箱/手机号">
+      <input class="new-password" type="password" placeholder="新密码">
+      <input class="confirm-password" type="password" placeholder="确认密码">
+    </div>
+    <!-- 4.注册按钮 -->
+    <div class="forget-btn">
+      <div class="agree-terms">
+        <input type="checkbox" id="terms" class>
+        <label for="terms">我已阅读并同意《<a href="#">用户服务条款</a>》与《<a href="#">隐私协议</a>》</label>
+      </div>
+      <button>修改密码</button>
+    </div>
+    <!-- 5.登录失败弹窗 -->
+    <div class="login-popup">
+      <div>
+        <p>登录失败！</p>
+      </div>
+    </div>
+    <!-- 6.其他登录方式 -->
+    <div class="login-bottom">
+      <div>其他登录方式</div>
+      <div class="login-bottom-icon">
+        <i class="iconfont icon-douyin"></i>
+        <i class="iconfont icon-weixin"></i>
+        <i class="iconfont icon-QQ"></i>
+      </div>
+    </div>
+  </div>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <!-- 账号登录js -->
+  <script>
+    axios.defaults.baseURL = 'http://8.138.150.235:8585/cat';
+
+    document.querySelector('.login-btn button').addEventListener('click', function () {
+      // 1. 获取元素
+      const username = document.querySelector('.login-account .username');
+      const password = document.querySelector('.login-account .password');
+      const terms = document.querySelector('.login-btn .agree-terms input').checked;
+      if (username.value.length === 0 || password.value.length === 0) {
+        alert('请输入用户名或密码');
+        return;
+      }
+      if (username.value.length >= 16) {
+        alert('用户名不能超过16个字符');
+        return;
+      }
+      if (password.value.length >= 20 || password.value.length <= 6) {
+        alert('密码不能超过20个字符或小于6个字符');
+        return;
+      }
+      if (!terms) {
+        alert('请先同意用户服务条款和隐私协议');
+        return;
+      }
+
+      axios({
+        url: '/user/login',
+        method: 'POST',
+        data: {
+          username: username.value,
+          password: password.value
+        }
+      }).then(res => {
+        console.log(res);
+        console.log(res.data.code);
+        if (res.data.code === 200) {
+          alert('登录成功！');
+          // 传递token到登录页
+          localStorage.setItem('token', res.data.data);
+          window.location.href = 'user.html';
+        }
+        if (res.data.code === 500) {
+          document.querySelector('.login-popup div').style.opacity = 1;
+          // p文字内容更改
+          document.querySelector('.login-popup div p').textContent = '账号或密码错误';
+          // 3s后消失
+          setTimeout(() => {
+            document.querySelector('.login-popup div').style.opacity = 0;
+          }, 2000);
+        }
+      }).catch(err => {
+        console.log(err);
+        console.log(err.data.code);
+        alert('账号或密码错误');
+        document.querySelector('.login-popup').style.opacity = 1;
+        // p文字内容更改
+        document.querySelector('.login-popup div p').textContent = '账号或密码错误';
+        // 3s后消失
+        setTimeout(() => {
+          document.querySelector('.login-popup').style.opacity = 0;
+        }, 3000);
+      })
+    })
+
+    // 点击注册账号跳转页面
+    document.querySelector('.account-register').addEventListener('click', function () {
+      // 增加login-dismiss类名
+      document.querySelector('.login').classList.add('login-dismiss');
+      // 移除register类名
+      document.querySelector('.register').classList.remove('login-dismiss');
+    })
+
+    // 点击忘记密码跳转页面
+    document.querySelector('.forget-password-text').addEventListener('click', function () {
+      // 增加login-dismiss类名
+      document.querySelector('.login').classList.add('login-dismiss');
+      // 移除forget类名
+      document.querySelector('.forget').classList.remove('login-dismiss');
+    })
+
+  </script>
+
+  <!-- 账号注册js -->
+  <script>
+    // 1. 配置后端地址（必须写！）
+    axios.defaults.baseURL = "http://8.138.150.235:8585/cat";
+
+    // 2. 获取你的注册按钮
+    const registerBtn = document.querySelector('.register-btn button');
+
+    // 3. 点击注册 → 发送 AJAX 到服务器
+    registerBtn.addEventListener('click', function () {
+      // 获取你输入框里的内容（完全匹配你的 class）
+      const username = document.querySelector('.register-account .username').value.trim();
+      const password = document.querySelector('.register-account .password').value.trim();
+      const confirmPwd = document.querySelector('.register-account .confirm-password').value.trim();
+      const terms = document.querySelector('.register-btn .agree-terms input').checked;
+
+      // 前端校验
+      if (!username || !password || !confirmPwd) {
+        alert('请填写完整信息');
+        return;
+      }
+      if (password !== confirmPwd) {
+        alert('两次密码不一致');
+        return;
+      }
+      if (!terms) {
+        alert('请同意用户条款');
+        return;
+      }
+
+      // =======================
+      // ✅ AJAX 核心代码
+      // =======================
+      axios.post('/user/register', {
+        username: username,
+        password: password
+      })
+        .then(res => {
+          console.log('注册成功：', res.data);
+          alert('注册成功！');
+          // 注册成功 → 关闭注册框 / 跳转到登录页
+          document.querySelector('.login').classList.remove('login-dismiss');
+          // 移除register类名
+          document.querySelector('.register').classList.add('login-dismiss');
+        })
+        .catch(err => {
+          console.log('注册失败：', err);
+          alert('注册失败：' + (err.response?.data?.msg || '账号已存在'));
+        });
+    });
+  </script>
+
+  <!-- 忘记密码js -->
+  <script>
+    // 1. 配置后端地址（必须写！）
+    axios.defaults.baseURL = "http://8.138.150.235:8585/cat";
+
+    // 2. 获取你的注册按钮
+    const forgetBtn = document.querySelector('.forget-btn button');
+
+    // 3. 点击注册 → 发送 AJAX 到服务器
+    forgetBtn.addEventListener('click', function () {
+      // 获取你输入框里的内容（完全匹配你的 class）
+      const username = document.querySelector('.forget-account .username').value.trim();
+      const password = document.querySelector('.forget-account .new-password').value.trim();
+      const confirmPwd = document.querySelector('.forget-account .confirm-password').value.trim();
+      const terms = document.querySelector('.forget-btn .agree-terms input').checked;
+
+      // 前端校验
+      if (!username || !password || !confirmPwd) {
+        alert('请填写完整信息');
+        return;
+      }
+      if (password !== confirmPwd) {
+        alert('两次密码不一致');
+        return;
+      }
+      if (!terms) {
+        alert('请同意用户条款');
+        return;
+      }
+
+      // =======================
+      // ✅ AJAX 核心代码
+      // =======================
+      axios.post('/user/forgetPassword', {
+        username: username,
+        password: password
+      })
+        .then(res => {
+          console.log('修改密码成功：', res.data);
+          alert('修改密码成功！');
+
+          // 修改密码成功 → 关闭注册框 / 跳转到登录页
+          document.querySelector('.login').classList.remove('login-dismiss');
+          // 移除forget类名
+          document.querySelector('.forget').classList.add('login-dismiss');
+        })
+        .catch(err => {
+          console.log('修改密码失败：', err);
+          alert('修改密码失败：' + (err.response?.data?.msg || '账号不存在'));
+        });
+    });
+  </script>
+</body>
+
+</html>
