@@ -23,7 +23,7 @@
           </div>
         </div>
         <div class="home-search-right">
-          <img src="./img/圈-加.png" alt="">
+          <img class="publish-icon" src="./img/圈-加.png" alt="">
         </div>
       </div>
       <div class="home-headernav">
@@ -117,10 +117,94 @@
       <p>我的</p>
     </div>
   </div>
+  <div class="publish-article slide-panel">
+    <div class="publish-article-type-top"></div>
+    <div class="publish-article-type-bottom">
+      <div class="close-icon"><i class="iconfont icon-xiangyou1"></i></div>
+      <div class="publish-article-content">
+        <img class="publish-avator-img" alt="">
+        <p id="publish-username"></p>
+        <i class="iconfont icon-caogao"></i>
+        <p class="caogao-p">草稿箱</p>
+      </div>
+      <div class="publish-article-type">
+        <div class="type1">
+          <div class="type1-left">
+            <p>写篇文章<i class="iconfont icon-xiangyou1"></i></p>
+            <p>创作你的技术魅力</p>
+          </div>
+          <div class="type1-right">
+            <i class="iconfont icon-diannao"></i>
+          </div>
+        </div>
+        <div class="type2">
+          <div class="type2-left">
+            <p>传个资源<i class="iconfont icon-xiangyou1"></i></p>
+            <p>上传你的技术杰作</p>
+          </div>
+          <div class="type2-right">
+            <i class="iconfont icon-wenjianshangchuan"></i>
+          </div>
+        </div>
+      </div>
+      <div class="publish-footer">
+        <div class="publish-footer-item">
+          <div><i class="iconfont icon-paihangbang"></i></div>
+          <p>看热榜</p>
+        </div>
+        <div class="publish-footer-item">
+          <div><i class="iconfont icon-tiwenti"></i></div>
+          <p>提问题</p>
+        </div>
+        <div class="publish-footer-item">
+          <div><i class="iconfont icon-bianji"></i></div>
+          <p>去回答</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
+  // ==========================
+  // ✅ 防抖 + 节流 工具函数
+  // ==========================
+  function debounce(func, delay = 300) {
+    let timer = null;
+    return function (...args) {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => {
+        func.apply(this, args);
+      }, delay);
+    };
+  }
+
+  function throttle(func, delay = 500) {
+    let lastTime = 0;
+    return function (...args) {
+      const now = Date.now();
+      if (now - lastTime >= delay) {
+        lastTime = now;
+        func.apply(this, args);
+      }
+    };
+  }
+
+  // ==========================
+  // ✅ 全局登录校验函数（核心）
+  // ==========================
+  function checkLogin() {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("请先登录");
+      location.href = "login.html";
+      return false;
+    }
+    return true;
+  }
+
   // ==========================
   // 页面滑动跳转（修复版）
   // ==========================
@@ -145,6 +229,7 @@
   // ==========================
   // 主页 → 搜索页
   document.querySelector(".home-search-left").addEventListener("click", function () {
+    if (!checkLogin()) return;
     const homePage = document.querySelector(".homepage");
     const searchInterfacePage = document.querySelector(".search-interface");
     const footer = document.querySelector(".footer");
@@ -158,12 +243,11 @@
     const searchInterfacePage = document.querySelector(".search-interface");
     const footer = document.querySelector(".footer");
     backToPage(searchInterfacePage, homePage);
-    footer.style.display = 'flex'; // ✅ 修复
+    footer.style.display = 'flex';
   })
 
-  // 搜索页 → 结果页（✅ 完美修复：自动填充搜索框 + 自动执行搜索）
+  // 搜索页 → 结果页
   document.querySelector(".search-interface .header-right").addEventListener("click", function () {
-    // 1. 获取历史搜索页的输入框内容（你的 id 是 key2）
     const key = document.querySelector("#key2").value.trim();
 
     if (!key) {
@@ -176,19 +260,12 @@
     const footer = document.querySelector(".footer");
 
     footer.style.display = 'none';
-
-    // 2. 跳转到搜索结果页
     goToPage(searchInterfacePage, searchContentPage);
-
-    // 3. ✅ 把关键词填到结果页的搜索框
     document.querySelector("#search-content-key").value = key;
 
-    // 4. ✅ 延迟一点执行搜索（保证页面切换完成）
     setTimeout(() => {
       startSearch(key);
     }, 300);
-
-    // 5. 清空上一页输入框
     document.querySelector("#key2").value = "";
   });
 
@@ -241,27 +318,22 @@
       });
     });
   }
-  //点击文章查看详情
-  // 给所有文章项绑定点击事件（用事件委托，避免动态渲染失效）
+
   document.querySelector(".home-article-list").addEventListener("click", function (e) {
+    if (!checkLogin()) return;
     const articleItem = e.target.closest(".home-article-item");
     if (!articleItem) return;
-
     const articleId = articleItem.dataset.id;
-    // 跳转到详情页，带文章ID参数
     location.href = `article.html?id=${articleId}`;
   });
 
   document.querySelector(".searcharticle-result-list").addEventListener("click", function (e) {
+    if (!checkLogin()) return;
     const articleItem = e.target.closest(".searcharticle-result-list-item");
     if (!articleItem) return;
-
     const articleId = articleItem.dataset.id;
-    // 跳转到详情页，带文章ID参数
     location.href = `article.html?id=${articleId}`;
   });
-
-
 
   // ==========================
   // 搜索页逻辑（文章+用户）
@@ -277,7 +349,6 @@
   let isLoading = false;
   let noMore = false;
 
-  // 导航切换
   document.querySelector(".search-content .nav ul li:first-child").addEventListener("click", function (e) {
     const userLi = document.querySelector(".search-content .nav ul li:nth-child(5)");
     document.querySelector(".searcharticle-result-list").classList.remove("content-unchoose");
@@ -285,11 +356,8 @@
     e.target.classList.add("nav-choose");
     userLi.classList.remove("nav-choose");
     typenum = 1; currentPage = 1; noMore = false;
-    //自动执行一次搜索
     const key = document.querySelector("#search-content-key").value.trim();
-    if (key) {
-      startSearch(key);
-    }
+    if (key) startSearch(key);
   });
 
   document.querySelector(".search-content .nav ul li:nth-child(5)").addEventListener("click", function (e) {
@@ -299,50 +367,33 @@
     e.target.classList.add("nav-choose");
     allLi.classList.remove("nav-choose");
     typenum = 5; currentPage = 1; noMore = false;
-    //自动执行一次搜索
     const key = document.querySelector("#search-content-key").value.trim();
-    if (key) {
-      startSearch(key);
-    }
+    if (key) startSearch(key);
   });
 
-  // 搜索
   document.querySelector(".search-content .header-right p").addEventListener("click", startSearch);
-  document.querySelector("#search-content-key").addEventListener("keyup", (e) => {
-    const key = document.querySelector("#search-content-key").value.trim();
-    if (e.key === "Enter") startSearch(key);
-  });
+
+  // 搜索输入框 防抖
+  document.querySelector("#search-content-key").addEventListener("keyup", debounce((e) => {
+    if (e.key === "Enter") startSearch();
+  }, 300));
 
   function startSearch(key) {
-    // ✅ 强制从搜索框拿最新值，保证 key 一定正确
     keyword = document.querySelector("#search-content-key").value.trim();
-
-    if (!keyword) {
-      alert("请输入搜索内容");
-      return;
-    }
-
-    currentPage = 1;
-    noMore = false;
-
+    if (!keyword) { alert("请输入搜索内容"); return; }
+    currentPage = 1; noMore = false;
     if (typenum === 1) {
       document.querySelector(".searcharticle-result-list").innerHTML = "";
     } else {
       document.querySelector(".searchuser-result-list").innerHTML = "";
     }
-
     loadData();
   }
 
-  // 加载数据
   function loadData() {
     if (isLoading || noMore) return;
     isLoading = true;
-
-    let box = typenum === 1
-      ? document.querySelector(".searcharticle-result-list")
-      : document.querySelector(".searchuser-result-list");
-
+    let box = typenum === 1 ? document.querySelector(".searcharticle-result-list") : document.querySelector(".searchuser-result-list");
     box.innerHTML += `<div class="loading" style="text-align:center;padding:15px;color:#999;">加载中...</div>`;
 
     setTimeout(() => {
@@ -352,7 +403,6 @@
       }).then(res => {
         document.querySelector(".loading")?.remove();
         const list = res.data.data.records || [];
-
 
         if (list.length === 0 && currentPage === 1) {
           box.innerHTML = `<p style="padding:30px;text-align:center;">暂无搜索结果</p>`;
@@ -377,26 +427,56 @@
         } else {
           list.forEach(item => {
             box.innerHTML += `
-            <div class="searchuser-result-list-item">
+            <div class="searchuser-result-list-item" data-userid="${item.id}">
               <div class="searchuser-result-list-item-left">
                 <img src="${item.avatar || './img/touxiang.jpg'}" alt="">
               </div>
               <div class="searchuser-result-list-center">
                 <p>${item.username || "未知用户"}</p>
-                <p>粉丝: ${item.fans || 0}</p>
+                <p data-fans="${item.fans || 0}">粉丝: ${item.fans || 0}</p>
               </div>
-              <div class="searchuser-result-list-right">
-                <button>关注</button>
+              <div class="searchuser-result-list-item-right">
+                <button class="follow-btn" data-userid="${item.id}">加载中...</button>
               </div>
             </div>`;
-          })
+          });
+
+          const token = localStorage.getItem("token") || "";
+          list.forEach(item => {
+            const userId = item.id;
+            axios.get("/user/isFollow", {
+              params: { userId: userId },
+              headers: { token: token }
+            }).then(res => {
+              const isFollowed = res.data.data;
+              const btn = document.querySelector(`.follow-btn[data-userid="${userId}"]`);
+              if (!btn) return;
+              btn.dataset.isfollow = isFollowed;
+
+              if (isFollowed) {
+                btn.innerText = "已关注";
+                btn.style.background = "#ccc";
+                btn.style.color = "#666";
+              } else {
+                btn.innerText = "关注";
+                btn.style.background = "#007bff";
+                btn.style.color = "#fff";
+              }
+            }).catch(() => {
+              const btn = document.querySelector(`.follow-btn[data-userid="${userId}"]`);
+              if (btn) {
+                btn.innerText = "关注";
+                btn.style.background = "#007bff";
+                btn.style.color = "#fff";
+              }
+            });
+          });
         }
 
         if (list.length < pageSize) {
           noMore = true;
           box.innerHTML += `<p style="text-align:center;padding:20px;">没有更多了</p>`;
         }
-
         currentPage++;
         isLoading = false;
       }).catch(() => {
@@ -404,23 +484,110 @@
         isLoading = false;
       });
     }, 500);
-    //每一次搜索，更新历史搜索信息
-    document.querySelector(".history-search-list").innerHTML += `<div class="history-search-list-item">
-            <p>${keyword} <i class="iconfont icon-cancel-1-copy"></i></p>
-          </div>`;
   }
-  // ==========================
-  // ✅ 修复：滑到底加载（唯一的 onscroll）
-  // 统一下滑加载（修复版）
-  document.querySelector('.search-content').addEventListener('scroll', function () {
+
+  // 滚动加载 节流
+  document.querySelector('.search-content').addEventListener('scroll', throttle(function () {
     const st = this.scrollTop;
     const sh = this.scrollHeight;
     const ch = this.clientHeight;
-
     if (st + ch >= sh - 200 && !isLoading && !noMore) {
       loadData();
     }
+  }, 500));
+
+  // ------------------------------
+  // 登录状态校验
+  // ------------------------------
+  function checkLoginStatus() {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("登录状态已过期，请重新登录");
+      location.href = "login.html";
+      return;
+    }
+    axios.get("/user/isLogin", { headers: { token: token } }).then(res => {
+      if (res.data.code === 200 && !res.data.data) {
+        localStorage.removeItem("token");
+        alert("登录过期");
+        location.href = "login.html";
+      }
+    });
+  }
+  setTimeout(checkLoginStatus, 10000);
+
+  // ------------------------------
+  // 发布文章
+  // ------------------------------
+  document.querySelector(".publish-icon").addEventListener("click", function () {
+    if (!checkLogin()) return;
+    document.querySelector(".slide-panel").classList.add("show");
+    const avatarUrl = localStorage.getItem("avatarsrc");
+    const avatarImg = document.querySelector(".publish-avator-img");
+    avatarImg.src = avatarUrl && avatarUrl !== "null" ? avatarUrl : "./img/touxiang.jpg";
+    const username = localStorage.getItem("username");
+    document.querySelector("#publish-username").innerText = username || "未知用户";
   });
+
+  document.querySelector(".close-icon").addEventListener("click", function () {
+    document.querySelector(".publish-article").classList.remove("show");
+  });
+  document.querySelector(".publish-article-type-top").addEventListener("click", function () {
+    document.querySelector(".publish-article").classList.remove("show");
+  });
+  document.querySelector(".type1-left").addEventListener("click", function () {
+    window.location.href = "articlepublishl.html";
+  });
+
+  // ==========================
+  // ✅ 关注/取消关注（节流防重复点击）
+  // ==========================
+  document.querySelector('.searchuser-result-list').addEventListener('click', throttle(function (e) {
+    const btn = e.target.closest('.follow-btn');
+    if (!btn) return;
+    const token = localStorage.getItem('token');
+    if (!token) { alert('请先登录'); return; }
+
+    const userItem = btn.closest('.searchuser-result-list-item');
+    const userId = btn.dataset.userid;
+    let isFollowed = btn.dataset.isfollow === 'true';
+    const fansEl = userItem.querySelector('[data-fans]');
+    let currentFans = parseInt(fansEl.dataset.fans || 0);
+
+    if (btn.classList.contains('loading')) return;
+    btn.classList.add('loading');
+
+    axios.post('/user/follow', null, {
+      params: { userId: userId },
+      headers: { token: token }
+    }).then(res => {
+      if (res.data.code === 200) {
+        isFollowed = !isFollowed;
+        btn.dataset.isfollow = isFollowed;
+
+        if (isFollowed) {
+          currentFans += 1;
+          btn.innerText = '已关注';
+          btn.style.background = '#ccc';
+          btn.style.color = '#666';
+        } else {
+          currentFans -= 1;
+          btn.innerText = '关注';
+          btn.style.background = '#007bff';
+          btn.style.color = '#fff';
+        }
+
+        fansEl.innerText = `粉丝: ${currentFans}`;
+        fansEl.dataset.fans = currentFans;
+      } else {
+        alert('操作失败：' + (res.data.msg || '未知错误'));
+      }
+    }).catch(() => {
+      alert('关注请求失败');
+    }).finally(() => {
+      btn.classList.remove('loading');
+    });
+  }, 800));
 </script>
 
 

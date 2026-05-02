@@ -29,15 +29,13 @@
         <img src="" alt="">
       </div>
       <div class="acthor-info-name">
-        <p></p>
+        <p class="article-username"></p>
         <div class="article-type">
           <p></p>
         </div>
       </div>
       <div class="acthor-info-follow">
-        <button>
-          关注
-        </button>
+        <button>关注</button>
       </div>
     </div>
     <div class="content">
@@ -66,144 +64,314 @@
             <i class="iconfont icon-fenxiang"></i>
             <p>分享</p>
           </li>
-          <li></li>
         </ul>
       </div>
     </div>
   </div>
 
-</body>
+  <div class="comment slide-panel">
+    <div class="comment-header">
+      <h2>全部评论</h2>
+      <i class="iconfont icon-cancel-1-copy"></i>
+    </div>
+    <div class="empty"></div>
+    <div class="comment-content" id="commentList">
+      <!-- 这里清空！不要写死评论！ -->
+    </div>
+    <div class="comment-footer">
+      <img src="./img/touxiang.jpg" alt="">
+      <div>
+        <p>写评论</p>
+      </div>
+    </div>
+  </div>
 
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script>
-  // 接口基础地址
-  const baseURL = "http://8.138.150.235:8585/cat";
-  axios.defaults.baseURL = baseURL;
+  <div class="comment-typepart slide-panel">
+    <textarea placeholder="写评论" id="comment-input"></textarea>
+    <div>
+      <p id="submit-comment-btn">发送</p>
+    </div>
+  </div>
 
-  // 1. 获取文章ID
-  const params = new URLSearchParams(location.search);
-  const articleId = params.get("id");
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    // 接口基础地址
+    const baseURL = "http://8.138.150.235:8585/cat";
+    axios.defaults.baseURL = baseURL;
 
-  if (!articleId) {
-    alert("文章ID不存在");
-    history.back();
-  }
+    // 1. 获取文章ID
+    const params = new URLSearchParams(location.search);
+    const articleId = params.get("id");
 
-  // 2. 文章初始数据
-  let likedCount = 0;
-  let collectedCount = 0;
+    if (!articleId) {
+      alert("文章ID不存在");
+      history.back();
+    }
 
-  // 3. 请求文章详情
-  axios.get("/article/detail", {
-    params: { id: articleId }
-  })
-    .then(res => {
-      const data = res.data.data;
+    // 全局 token
+    const token = localStorage.getItem("token") || "";
 
-      likedCount = data.liked || 0;
-      collectedCount = data.collected || 0;
+    // 2. 文章初始数据
+    let likedCount = 0;
+    let collectedCount = 0;
+    let authorUserId = null;
+    let isFollowed = false;
+    const followBtn = document.querySelector(".acthor-info-follow button");
 
-      // 渲染页面
-      document.querySelector(".title h2").innerText = data.title || "无标题";
-      document.querySelector(".acthor-info-avatar img").src = data.userInfo?.avatar || "./img/touxiang.jpg";
-      document.querySelector(".acthor-info-name p").innerText = data.userInfo?.username || "作者";
-      document.querySelector(".article-type p").innerText = data.type || "分类";
-      document.querySelector(".content p").innerHTML = data.content || "暂无内容";
-      document.querySelector(".footer-right ul li .like-count").innerText = likedCount;
-      document.querySelector(".footer-right ul li .collect-count").innerText = collectedCount;
+    // 3. 请求文章详情
+    axios.get("/article/detail", {
+      params: { id: articleId }
     })
-    .catch(() => {
-      alert("加载文章失败");
+      .then(res => {
+        const data = res.data.data;
+        likedCount = data.liked || 0;
+        collectedCount = data.collected || 0;
+        authorUserId = data.userInfo?.id;
+
+        document.querySelector(".title h2").innerText = data.title || "无标题";
+        document.querySelector(".acthor-info-avatar img").src = data.userInfo?.avatar || "./img/touxiang.jpg";
+        document.querySelector(".acthor-info-name p").innerText = data.userInfo?.username || "作者";
+        document.querySelector(".article-type p").innerText = data.type || "分类";
+        document.querySelector(".content p").innerHTML = data.content || "暂无内容";
+        document.querySelector(".footer-right ul li .like-count").innerText = likedCount;
+        document.querySelector(".footer-right ul li .collect-count").innerText = collectedCount;
+
+        if (authorUserId && token) {
+          checkFollowStatus();
+        }
+      })
+      .catch(() => {
+        alert("加载文章失败");
+      });
+
+    // ======================================
+    // 关注作者
+    // ======================================
+    function checkFollowStatus() {
+      axios.get("/user/isFollow", {
+        params: { userId: authorUserId },
+        headers: { token: token }
+      }).then(res => {
+        if (res.data.code === 200) {
+          isFollowed = res.data.data;
+          renderFollowBtn();
+        }
+      });
+    }
+
+    function renderFollowBtn() {
+      if (isFollowed) {
+        followBtn.innerText = "已关注";
+        followBtn.style.background = "#ccc";
+        followBtn.style.color = "#666";
+      } else {
+        followBtn.innerText = "关注";
+        followBtn.style.background = "#007bff";
+        followBtn.style.color = "#fff";
+      }
+    }
+
+    followBtn.addEventListener("click", function () {
+      if (!authorUserId) return alert("用户信息异常");
+      if (!token) return alert("请先登录");
+
+      axios.post("/user/follow", null, {
+        params: { userId: authorUserId },
+        headers: { token: token }
+      }).then(res => {
+        if (res.data.code === 200) {
+          isFollowed = !isFollowed;
+          renderFollowBtn();
+        }
+      });
     });
 
-  // ------------------------------
-  // 4. 点赞功能（已实现）
-  // ------------------------------
-  const likeIcon = document.querySelector(".footer-right ul li .icon-dianzan_kuai");
-  const likeCountEl = document.querySelector(".footer-right ul li .like-count");
-  let isLiked = false;
+    // ------------------------------
+    // 点赞
+    // ------------------------------
+    const likeIcon = document.querySelector(".footer-right ul li .icon-dianzan_kuai");
+    const likeCountEl = document.querySelector(".footer-right ul li .like-count");
+    let isLiked = false;
 
-  likeIcon.addEventListener("click", function () {
-    if (this.classList.contains("loading")) return;
-    this.classList.add("loading");
-
-    axios.post("/article/like", null, {
-      params: { articleId: articleId },
-      headers: {
-        token: localStorage.getItem("token") || ""
-      }
-    })
-      .then(res => {
-        if (res.data.code === 200) {
-          isLiked = !isLiked;
-          likedCount += isLiked ? 1 : -1;
-
-          likeCountEl.innerText = likedCount;
-          if (isLiked) {
-            likeIcon.style.color = "#ff4313";
-            likeIcon.classList.add("liked");
-          } else {
-            likeIcon.style.color = "";
-            likeIcon.classList.remove("liked");
-          }
-        } else {
-          alert("操作失败：" + res.data.msg);
-        }
-      })
-      .catch(() => {
-        alert("点赞请求失败，请检查网络或登录状态");
-      })
-      .finally(() => {
-        this.classList.remove("loading");
+    likeIcon.addEventListener("click", function () {
+      if (!token) return alert("请先登录");
+      axios.post("/article/like", null, {
+        params: { articleId: articleId },
+        headers: { token: token }
+      }).then(res => {
+        isLiked = !isLiked;
+        likedCount += isLiked ? 1 : -1;
+        likeCountEl.innerText = likedCount;
+        likeIcon.style.color = isLiked ? "#ff4313" : "";
       });
-  });
+    });
 
-  // ------------------------------
-  // 5. 新增：收藏/取消收藏功能
-  // ------------------------------
-  const collectIcon = document.querySelector(".footer-right ul li .icon-shoucang");
-  const collectCountEl = document.querySelector(".footer-right ul li .collect-count");
-  let isCollected = false;
+    // ------------------------------
+    // 收藏
+    // ------------------------------
+    const collectIcon = document.querySelector(".footer-right ul li .icon-shoucang");
+    const collectCountEl = document.querySelector(".footer-right ul li .collect-count");
+    let isCollected = false;
 
-  collectIcon.addEventListener("click", function () {
-    if (this.classList.contains("loading")) return;
-    this.classList.add("loading");
-
-    axios.post("/article/collect", null, {
-      params: { articleId: articleId },
-      headers: {
-        token: localStorage.getItem("token") || ""
-      }
-    })
-      .then(res => {
-        if (res.data.code === 200) {
-          isCollected = !isCollected;
-          collectedCount += isCollected ? 1 : -1;
-
-          collectCountEl.innerText = collectedCount;
-          if (isCollected) {
-            collectIcon.style.color = "#ff4313"; // 已收藏红色
-            collectIcon.classList.add("collected");
-          } else {
-            collectIcon.style.color = "";
-            collectIcon.classList.remove("collected");
-          }
-        } else {
-          alert("操作失败：" + res.data.msg);
-        }
-      })
-      .catch(() => {
-        alert("收藏请求失败，请检查网络或登录状态");
-      })
-      .finally(() => {
-        this.classList.remove("loading");
+    collectIcon.addEventListener("click", function () {
+      if (!token) return alert("请先登录");
+      axios.post("/article/collect", null, {
+        params: { articleId: articleId },
+        headers: { token: token }
+      }).then(res => {
+        isCollected = !isCollected;
+        collectedCount += isCollected ? 1 : -1;
+        collectCountEl.innerText = collectedCount;
+        collectIcon.style.color = isCollected ? "#ff4313" : "";
       });
-  });
+    });
 
-  // 返回按钮
-  document.querySelector(".header-left i").onclick = function () {
-    history.back();
-  };
-</script>
+    // 返回按钮
+    document.querySelector(".header-left i").onclick = function () {
+      history.back();
+    };
+
+    // ==============================
+    // 评论功能（含二级评论）
+    // ==============================
+    const clickBox = document.querySelector(".footer-right ul li:nth-child(2)");
+    const slidePanel = document.querySelector(".comment");
+    const closeBtn = document.querySelector(".comment-header i");
+    const typingpart = document.querySelector(".comment-footer div");
+    const commentType = document.querySelector(".comment-typepart");
+    const commentInput = document.getElementById("comment-input");
+    const submitBtn = document.getElementById("submit-comment-btn");
+
+    let replyParentId = null;
+    let replyToUsername = "";
+
+    // 打开评论面板
+    clickBox.addEventListener("click", function () {
+      slidePanel.classList.add("show");
+      commentPage = 1;
+      loadComments(1);
+    });
+
+    // 关闭评论面板
+    closeBtn.addEventListener("click", function () {
+      slidePanel.classList.remove("show");
+    });
+
+    // 打开评论输入框
+    typingpart.addEventListener("click", function (e) {
+      e.stopPropagation();
+      replyParentId = null;
+      commentInput.placeholder = "写评论";
+      commentType.classList.add("show");
+    });
+
+    // 点击外部关闭输入框
+    document.addEventListener("click", function (e) {
+      if (!commentType.contains(e.target)) {
+        commentType.classList.remove("show");
+      }
+    });
+
+    // ------------------------------
+    // 加载一级评论（已修复异步问题）
+    // ------------------------------
+    let commentPage = 1;
+    const commentPageSize = 10;
+    let commentHasMore = true;
+
+    function loadComments(page = 1) {
+      if (!commentHasMore && page !== 1) return;
+
+      axios.get("/comment/first", {
+        params: { page, pageSize: commentPageSize, articleId }
+      }).then(res => {
+        const records = res.data.data.records || [];
+        const total = res.data.data.total || 0;
+        const commentListEl = document.getElementById("commentList");
+
+        if (page === 1) {
+          commentListEl.innerHTML = "";
+          commentHasMore = true;
+        }
+
+        if (records.length === 0 && page === 1) {
+          commentListEl.innerHTML = `<div style="text-align:center;padding:50px 0;color:#999;">暂无评论</div>`;
+          commentHasMore = false;
+          return;
+        }
+
+        // ✅ 修复：异步请求用户信息后再渲染
+        records.forEach(item => {
+          axios.get('/user/' + item.userId)
+            .then(userRes => {
+              const user = userRes.data.data;
+              const avatar = user.avatar || './img/touxiang.jpg';
+              const username = user.username || '未知用户';
+
+              const html = `
+            <div class="comment-item" data-comment-id="${item.id}" data-username="${username}">
+              <div class="comment-item-top">
+                <img src="${avatar}" alt="">
+                <div><p>${username}</p></div>
+                <i class="iconfont icon-dianzan_kuai"></i>
+              </div>
+              <div class="comment-item-bottom">
+                <p>${item.content}</p>
+              </div>
+              <div class="second-comment"></div>
+            </div>`;
+
+              commentListEl.innerHTML += html;
+            });
+        });
+
+        // 绑定点击事件
+        setTimeout(() => {
+          document.querySelectorAll(".comment-item").forEach(el => {
+            el.onclick = function (e) {
+              e.stopPropagation();
+              replyParentId = this.dataset.commentId;
+              replyToUsername = this.dataset.username;
+              commentInput.placeholder = `回复 ${replyToUsername}`;
+              commentType.classList.add("show");
+            };
+          });
+        }, 200);
+
+        document.querySelector(".comment-count").innerText = total;
+      }).catch(err => {
+        console.log(err);
+      });
+    }
+
+    // ------------------------------
+    // 发布评论
+    // ------------------------------
+    submitBtn.addEventListener("click", function () {
+      const content = commentInput.value.trim();
+      if (!content) return alert("请输入内容");
+
+      axios.post("/comment/post", {
+        articleId, parentId: replyParentId, content
+      }, { headers: { token } }).then(res => {
+        if (res.data.code === 200) {
+          alert("发布成功");
+          commentInput.value = "";
+          commentType.classList.remove("show");
+
+          if (replyParentId) {
+            const box = document.querySelector(`.comment-item[data-comment-id="${replyParentId}"] .second-comment`);
+            box.innerHTML += `<p>${localStorage.getItem('username') || '我'} 回复：${content}</p><i class="iconfont icon-dianzan_kuai"></i>`;
+          } else {
+            loadComments(1);
+          }
+
+          replyParentId = null;
+          commentInput.placeholder = "写评论";
+        }
+      });
+    });
+  </script>
+</body>
 
 </html>

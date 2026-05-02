@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="./icofont1/iconfont.css">
+  <link rel="stylesheet" href="css/articlepublish.css">
+</head>
+
+<body>
+  <div class="article-edit">
+    <div class="article-edit-top">
+      <p>取消</p>
+      <p>下一步</p>
+    </div>
+    <div class="article-edit-title">
+      <input type="text" placeholder="请输入标题（5~20字）">
+    </div>
+    <div class="article-edit-content">
+      <textarea placeholder="请输入正文"></textarea>
+    </div>
+    <div class="article-edit-bottom">
+      <i class="iconfont icon-tupian"></i>
+      <i class="iconfont icon-ziti"></i>
+      <i class="iconfont icon-wenbenkuang"></i>
+      <i class="iconfont icon-lianjie"></i>
+      <i class="iconfont icon-arrow-go-back-fill"></i>
+      <i class="iconfont icon-a-youfanhuibai"></i>
+    </div>
+  </div>
+  <div class="confirm-publish">
+    <div class="confirm-publish-top">
+      <p>设置</p>
+      <i class="iconfont icon-xiangzuo1"></i>
+    </div>
+    <div class="confirm-publish-img">
+      <p></p>
+      <div>
+        <i class="iconfont icon-cancel-1-copy"></i>
+        <p>上传图片</p>
+      </div>
+    </div>
+    <div class="confirm-publish-type">
+      <div class="type-item1"> 、
+        <ul>
+          <li>封面设置</li>
+          <button id="type1">
+            <p>无封面</p>
+          </button>
+          <button id="type2" class="botton-choosen">
+            <p>单图</p>
+          </button>
+        </ul>
+      </div>
+      <div class="type-item2"> 、
+        <ul>
+          <li>文章类型</li>
+          <button class="botton-choosen" id="type3">
+            <p>前端</p>
+          </button>
+          <button id="type4">
+            <p>后端</p>
+          </button>
+          <button id="type5">
+            <p>移动开发</p>
+          </button>
+          <button class="special-btn">
+            <p>编程语言</p>
+          </button>
+          <button id="type6">
+            <p>Java</p>
+          </button>
+          <button id="type7">
+            <p>Python</p>
+          </button>
+        </ul>
+      </div>
+      <div>
+        <ul>
+
+        </ul>
+      </div>
+      <div class="type-item3"> 、
+        <ul>
+          <li>可见范围</li>
+          <button class="botton-choosen" id="type8">
+            <p>全部可见</p>
+          </button>
+          <button id="type9">
+            <p>仅我可见</p>
+          </button>
+          <button id="type10">
+            <p>粉丝可见</p>
+          </button>
+        </ul>
+      </div>
+      <div>、
+        <ul>
+          <li>标签选择</li>
+          <p class="choose-style">请选择<i class="iconfont icon-xiangyou1"></i></p>
+        </ul>
+      </div>
+      <div>、
+        <ul>
+          <li>分类专栏</li>
+          <p class="choose-style">请选择<i class="iconfont icon-xiangyou1"></i></p>
+        </ul>
+      </div>
+
+
+
+
+    </div>
+    <div class="confirm-publish-bottom">
+      <button>
+        <p>保存草稿</p>
+      </button>
+      <button>
+        <p>发布内容</p>
+      </button>
+    </div>
+  </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+  // 获取页面元素
+  axios.defaults.baseURL = 'http://8.138.150.235:8585/cat';
+  const articleEdit = document.querySelector('.article-edit');
+  const confirmPublish = document.querySelector('.confirm-publish');
+  const nextBtn = document.querySelector('.article-edit-top p:last-child');
+  const cancelBtn = document.querySelector('.article-edit-top p:first-child');
+  const backBtn = document.querySelector('.confirm-publish-top i');
+  const pubishImgBox = document.querySelector('.confirm-publish-img div');
+
+  // 页面跳转函数
+  function goToPage(currentPage, nextPage) {
+    nextPage.style.zIndex = '10';
+    currentPage.style.zIndex = '5';
+    currentPage.style.transform = 'translateX(-100%)';
+    nextPage.style.transform = 'translateX(0)';
+  }
+
+  function backToPage(currentPage, prevPage) {
+    prevPage.style.zIndex = '10';
+    currentPage.style.zIndex = '5';
+    currentPage.style.transform = 'translateX(100%)';
+    prevPage.style.transform = 'translateX(0)';
+  }
+
+  // 1. 下一步：非空判断
+  nextBtn.addEventListener('click', function () {
+    const title = articleEdit.querySelector('input').value.trim();
+    const content = articleEdit.querySelector('textarea').value.trim();
+
+    if (!title || !content) {
+      alert('请输入标题和正文内容！');
+      return;
+    }
+    document.querySelector('.confirm-publish-img p').innerText = title;
+    goToPage(articleEdit, confirmPublish);
+  });
+
+  // 2. 返回
+  backBtn.addEventListener('click', function () {
+    backToPage(confirmPublish, articleEdit);
+  });
+
+  // 3. 取消
+  cancelBtn.addEventListener('click', function () {
+    articleEdit.querySelector('input').value = '';
+    articleEdit.querySelector('textarea').value = '';
+    window.location.href = 'search.html';
+  });
+
+  // 4. 按钮互斥 + 封面显示隐藏
+  const allButtons = document.querySelectorAll('.confirm-publish-type button');
+  allButtons.forEach(btn => {
+    btn.addEventListener('click', function () {
+      const ul = this.closest('ul');
+      ul.querySelectorAll('button').forEach(b => b.classList.remove('botton-choosen'));
+      this.classList.add('botton-choosen');
+
+      const typeItem1 = document.querySelector('.type-item1');
+      if (typeItem1) {
+        if (typeItem1.querySelector('#type2').classList.contains('botton-choosen')) {
+          pubishImgBox.style.display = 'flex';
+        }
+        if (typeItem1.querySelector('#type1').classList.contains('botton-choosen')) {
+          pubishImgBox.style.display = 'none';
+        }
+      }
+    });
+  });
+
+  // 5. 本地上传图片功能
+  const imgUpload = document.createElement('input');
+  imgUpload.type = 'file';
+  imgUpload.accept = 'image/*';
+  imgUpload.style.display = 'none';
+  document.body.appendChild(imgUpload);
+
+  let finalImg = '';
+  pubishImgBox.addEventListener('click', () => imgUpload.click());
+  imgUpload.addEventListener('change', function (e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    pubishImgBox.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;">`;
+    finalImg = url;
+  });
+
+  // ==========================
+  // ✅ 发布文章（最终修复版）
+  // ==========================
+  document.querySelector('.confirm-publish-bottom button:last-child').addEventListener('click', function () {
+    const title = articleEdit.querySelector('input').value.trim();
+    const content = articleEdit.querySelector('textarea').value.trim();
+    const typeText = document.querySelector('.type-item2 .botton-choosen p').innerText;
+    const hasImage = document.querySelector('#type2').classList.contains('botton-choosen');
+
+    // 图片处理：有图传数组，无图传空数组
+    const img = hasImage && finalImg ? [finalImg] : [];
+
+    const articleData = {
+      title: title,
+      content: content,
+      type: typeText,
+      img: img,
+      summary: title // 解决不能为null报错
+    };
+
+    const token = localStorage.getItem('token');
+
+    axios.post('/article/post', articleData, {
+      headers: {
+        'token': token
+      }
+    })
+      .then(function (response) {
+        alert('发布成功！');
+        console.log(response.data);
+        // window.location.href = 'search.html';
+      })
+      .catch(function (error) {
+        console.error('发布失败', error);
+        alert('发布失败：' + (error.response?.data?.msg || '参数错误'));
+      });
+  });
+</script>
+
+</html>

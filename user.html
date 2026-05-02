@@ -6,12 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <link rel="stylesheet" href="./css/base.css">
-  <link rel="stylesheet" href="./css/user.css">、
+  <link rel="stylesheet" href="./css/user.css">
   <link rel="stylesheet" href="./icofont1/iconfont.css">
   <!-- <link rel="stylesheet" href="./icofont/iconfont.css"> -->
 </head>
 
 <body>
+  <!-- 隐藏的文件选择框，用于上传头像 -->
+  <input type="file" id="avatar-input" accept="image/png, image/jpeg" style="display: none;">
   <div class="user ">
     <div class="header">
       <i class="iconfont icon-saoma"> </i>
@@ -79,7 +81,7 @@
         </div>
         <div>
           <ul>
-            <li>
+            <li class="special-delete-icon">
               <span><i class="iconfont icon-remind-line"></i></span>
               <p>内容管理</p>
             </li>
@@ -195,6 +197,7 @@
     <div class="empty"></div>
     <div class="adit-avator">
       <div class="adit-avator-imgimg"> </div>
+      <i class="iconfont icon-zhaoxiangji "></i>
       <div class="adit-avator-p">
         <p>点击更换头像</p>
         <p>本月剩余修改5/5次</p>
@@ -287,6 +290,11 @@
         <div><i class="iconfont icon-quanjia"></i>修改</div>
       </div>
     </div>
+    <div class="log-out-part">
+      <button class="log-out-btn">
+        <p>退出登录</p>
+      </button>
+    </div>
   </div>
   <div class="edit-introduction active-dismiss">
     <div class="edit-introduction-top">
@@ -337,20 +345,118 @@
 
     </div>
   </div>
+  <div class="article-delete-part">
+    <div class="article-delete-footer">
+      <i class="iconfont icon-xiangzuo1"></i>
+      <p>创作中心</p>
+      <img src="./img/圈-加.png" alt="">
+    </div>
+    <div class="readdata">
+      <div>
+        <p>阅读量</p>
+        <p>16</p>
+        <p>昨日无变化</p>
+      </div>
+      <div>
+        <p>粉丝数</p>
+        <p>--</p>
+        <p>昨日无变化</p>
+      </div>
+      <div>
+        <p>总收益</p>
+        <p>0</p>
+        <p>昨日无变化</p>
+      </div>
+    </div>
+    <div class="announcement">
+      <p>公告</p>
+      <p>CSDN多平台同步发布功能正式上线！...</p>
+      <i class="iconfont icon-xiangyou1"></i>
+    </div>
+    <div class="icon-choose">
+      <ul>
+        <li>
+          <i class="iconfont icon-shuju"></i>
+          <p>粉丝数据</p>
+        </li>
+        <li>
+          <i class="iconfont icon-diannao"></i>
+          <p>内容数据</p>
+        </li>
+        <li>
+          <i class="iconfont icon-shouyi"></i>
+          <p>收益明细</p>
+        </li>
+        <li>
+          <i class="iconfont icon-zhuanlan"></i>
+          <p>创作指导</p>
+        </li>
+      </ul>
+    </div>
+    <div class="img-news">
+    </div>
+    <div class="delete-part-nav">
+      <ul>
+        <li>
+          <p>文章</p>
+        </li>
+        <li>
+          <p>专栏</p>
+        </li>
+        <li>
+          <p>下载</p>
+        </li>
+        <li>
+          <p>问答</p>
+        </li>
+      </ul>
+      <div><i class="iconfont icon-sousuo"></i></div>
+    </div>
+    <div class="article-delete-list">
+
+    </div>
+  </div>
 </body>
 
 <script src=" https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
+  // ========== 7天免登录校验 ==========
+  function checkAutoLogin() {
+    const token = localStorage.getItem("token");
+    const loginTime = localStorage.getItem("loginTime");
+
+    // 无登录信息，跳转到登录页
+    if (!token || !loginTime) {
+      location.href = "login.html";
+      return false;
+    }
+
+    // 7天毫秒数
+    const now = Date.now();
+    const sevenDays = 604800000;
+
+    // 超过7天过期
+    if (now - loginTime > sevenDays) {
+      localStorage.clear();
+      alert("登录已过期，请重新登录");
+      location.href = "login.html";
+      return false;
+    }
+    return true;
+  }
+  // 进入页面立即校验
+  checkAutoLogin();
+
   //点击底部首页图标跳转首页
   document.querySelector(".footer div:first-child").addEventListener("click", function () {
     location.href = "search.html";
   })
 
-  // 全局配置后端接口地址（你之前注册用的那个服务器地址）
+  // 全局配置后端接口地址
   axios.defaults.baseURL = 'http://8.138.150.235:8585/cat';
+
   // 刷新页面函数
   function refresh() {
-    // 获取用户信息
     const token = localStorage.getItem("token");
     axios({
       url: "/user/me",
@@ -358,13 +464,14 @@
       headers: { token: token }
     }).then(res => {
       console.log("用户信息：", res.data.data);
-      // 渲染到页面
       // 渲染头像url
       if (res.data.data.avatar !== null) {
+        localStorage.setItem("avatarsrc", res.data.data.avatar);
         document.querySelector(".avator-img").style.backgroundImage = `url(${res.data.data.avatar})`;
         document.querySelector(".adit-avator-imgimg").style.backgroundImage = `url(${res.data.data.avatar})`;
       }
       // 渲染用户名
+      localStorage.setItem("username", res.data.data.username);
       document.querySelector(".avator-info p").innerHTML = res.data.data.username;
       document.querySelector(".adit-userinfo1 .nickname").innerHTML = res.data.data.username;
       // 渲染关注数
@@ -373,48 +480,29 @@
       document.querySelector(".fans span").innerHTML = res.data.data.fans;
       // 渲染简介
       document.querySelector(".adit-userinfo1 .intro").innerHTML = res.data.data.intro;
-
     });
-
-
   }
+
   // 一进来就自动获取
   window.onload = function () {
-    // 直接拿！不需要传参、不需要链接带参数
     const token = localStorage.getItem("token");
-
-    if (!token) {
-      alert("请先登录");
-      location.href = "login.html";
-      return;
-    }
-    // 刷新页面
     refresh();
-
   }
 
   // 页面跳转函数 - 上一级到下一级（向左滑动）
   function goToPage(currentPage, nextPage) {
-    // 为下一页设置从右侧进入的初始状态
     nextPage.style.transform = 'translateX(100%)';
     nextPage.style.zIndex = '10';
     nextPage.classList.remove('active-dismiss');
-
-    // 触发重排
     void nextPage.offsetWidth;
-
-    // 执行滑动动画
     currentPage.style.transform = 'translateX(-100%)';
     nextPage.style.transform = 'translateX(0)';
   }
 
   // 页面返回函数 - 下一级返回上一级（向右滑动）
   function backToPage(currentPage, prevPage) {
-    // 设置层级
     prevPage.style.zIndex = '10';
     currentPage.style.zIndex = '5';
-
-    // 执行滑动动画
     currentPage.style.transform = 'translateX(100%)';
     prevPage.style.transform = 'translateX(0)';
   }
@@ -425,8 +513,6 @@
     const aditPage = document.querySelector(".adit");
     const aditTop = document.querySelector(".adit-top");
     const footer = document.querySelector(".footer");
-
-    // 隐藏footer
     footer.style.display = 'none';
     aditTop.classList.remove("active-dismiss");
     goToPage(userPage, aditPage);
@@ -438,8 +524,6 @@
     const userPage = document.querySelector(".user");
     const aditTop = document.querySelector(".adit-top");
     const footer = document.querySelector(".footer");
-
-    // 显示footer
     footer.style.display = 'flex';
     aditTop.classList.add("active-dismiss");
     backToPage(aditPage, userPage);
@@ -463,11 +547,25 @@
     backToPage(editIntroPage, aditPage);
   })
 
-  //点击确定按钮,返回页面，同时提交简介到接口，并刷新页面
+  //点击内容管理进入删除文章界面
+  document.querySelector(".special-delete-icon").addEventListener("click", function () {
+    const aditPage = document.querySelector(".adit");
+    const articleDeletePage = document.querySelector(".article-delete-part");
+    goToPage(aditPage, articleDeletePage);
+    articlePage = 1;
+    loadMyArticles(1);
+  })
+
+  //点击返回按钮返回删除用户界面
+  document.querySelector(".article-delete-footer i").addEventListener("click", function () {
+    const articleDeletePage = document.querySelector(".article-delete-part");
+    const aditPage = document.querySelector(".adit");
+    backToPage(articleDeletePage, aditPage);
+  })
+
+  //点击确定按钮,提交简介
   document.querySelector(".edit-intoduction-confirm").addEventListener("click", function () {
-    // 获取简介
     const introduction = document.querySelector(".edit-introduction-content div textarea").value;
-    // 提交简介到接口
     const token = localStorage.getItem("token");
     axios({
       url: "/user/modify/userInfo",
@@ -506,11 +604,9 @@
     backToPage(editUsernamePage, aditPage);
   })
 
-  //点击确定按钮,返回页面，同时提交昵称到接口，并刷新页面
+  //点击确定按钮,提交昵称
   document.querySelector(".edit-username-confirm").addEventListener("click", function () {
-    // 获取昵称
     const username = document.querySelector(".edit-username-content div textarea").value;
-    // 提交昵称到接口
     const token = localStorage.getItem("token");
     axios({
       url: "/user/modify/userInfo",
@@ -536,16 +632,11 @@
     const userPage = document.querySelector(".user");
     const followPage = document.querySelector(".follow");
     const footer = document.querySelector(".footer");
-
-    // 隐藏footer
     footer.style.display = 'none';
-
-    // 设置关注标签为选中状态
     document.querySelector('.follow-header-right p').classList.remove('choose');
     document.querySelector('.follow-header-left p').classList.add('choose');
     document.querySelector('.follow-content').classList.remove('follow-dismiss');
     document.querySelector('.fan-content').classList.add('follow-dismiss');
-
     goToPage(userPage, followPage);
   })
 
@@ -554,16 +645,11 @@
     const userPage = document.querySelector(".user");
     const followPage = document.querySelector(".follow");
     const footer = document.querySelector(".footer");
-
-    // 隐藏footer
     footer.style.display = 'none';
-
-    // 设置粉丝标签为选中状态
     document.querySelector('.follow-header-right p').classList.add('choose');
     document.querySelector('.follow-header-left p').classList.remove('choose');
     document.querySelector('.follow-content').classList.add('follow-dismiss');
     document.querySelector('.fan-content').classList.remove('follow-dismiss');
-
     goToPage(userPage, followPage);
   })
 
@@ -572,13 +658,9 @@
     const followPage = document.querySelector('.follow');
     const userPage = document.querySelector('.user');
     const footer = document.querySelector(".footer");
-
-    // 显示footer
     footer.style.display = 'flex';
-
     backToPage(followPage, userPage);
   })
-
 
   // 关注和粉丝切换
   document.querySelector('.follow-header-right p').addEventListener('click', function () {
@@ -586,19 +668,16 @@
     document.querySelector('.follow-header-left p').classList.remove('choose');
     document.querySelector('.follow-content').classList.add('follow-dismiss');
     document.querySelector('.fan-content').classList.remove('follow-dismiss');
-
   })
   document.querySelector('.follow-header-left p').addEventListener('click', function () {
     document.querySelector('.follow-header-left p').classList.add('choose');
     document.querySelector('.follow-header-right p').classList.remove('choose');
     document.querySelector('.follow-content').classList.remove('follow-dismiss');
     document.querySelector('.fan-content').classList.add('follow-dismiss');
-
   })
 
   // 渲染粉丝页面
   renderFansList();
-
   //渲染关注页面
   renderFollowList();
 
@@ -619,7 +698,6 @@
       }).then(res => {
         const list = res.data.data;
         console.log("粉丝列表数据：", list);
-        // 渲染到页面 #list 盒子里
         const box = document.querySelector(".fan-content");
         box.innerHTML = "";
         if (list.length === 0) {
@@ -634,21 +712,20 @@
         box.style.height = "82%";
         list.forEach(item => {
           const introText = (item.intro === null ? '此人很懒，什么也没有写' : item.intro);
+          // 头像：有则显示，无则默认图
+          const avatar = item.userInfo?.avatar || item.avatar || './img/kongbai.jpg';
           box.innerHTML += `
-            <div class="fan-content-item">
-             <div class="fan-content-avatar"></div>
-              <div class="fan-content-name">
-                <p>${item.username}</p>
-                <p>${introText}</p>
-              </div>
-              <div class="fan-content-follow">回关</div>
-            </div>
-`;
-
+        <div class="fan-content-item">
+         <div class="fan-content-avatar" style="background-image: url(${avatar});"></div>
+          <div class="fan-content-name">
+            <p>${item.username}</p>
+            <p>${introText}</p>
+          </div>
+          <div class="fan-content-follow">回关</div>
+        </div>`;
         });
       });
-    }
-    )
+    })
   }
 
   // 获取关注列表函数
@@ -668,7 +745,6 @@
       }).then(res => {
         const list = res.data.data;
         console.log("关注列表数据：", list);
-        // 渲染到页面 #list 盒子里
         const box = document.querySelector(".follow-content");
         box.innerHTML = "";
         if (list.length === 0) {
@@ -683,26 +759,226 @@
         box.style.height = "82%";
         list.forEach(item => {
           const introText = (item.intro === null ? '此人很懒，什么也没有写' : item.intro);
+          // 头像：有则显示，无则默认图
+          const avatar = item.userInfo?.avatar || item.avatar || './img/kongbai.jpg';
           box.innerHTML += `
-            <div class="follow-content-item">
-             <div class="follow-content-avatar"></div>
-              <div class="follow-content-name">
-                <p>${item.username}</p>      
-                <p>${introText}</p>                
-              </div>
-              <div class="follow-content-follow">已关注</div>
-            </div>
-`;
-
+        <div class="follow-content-item">
+         <div class="follow-content-avatar" style="background-image: url(${avatar});"></div>
+          <div class="follow-content-name">
+            <p>${item.username}</p>      
+            <p>${introText}</p>                
+          </div>
+          <div class="follow-content-follow">已关注</div>
+        </div>`;
         });
       });
-    }
-    )
+    })
   }
 
+  // 上传头像功能
+  const avatarInput = document.getElementById('avatar-input');
+  const avatorImgEl = document.querySelector('.avator-img');
+  const editAvatorImgEl = document.querySelector('.adit-avator-imgimg');
 
+  document.querySelector('.adit-avator').addEventListener('click', function () {
+    avatarInput.click();
+  });
+
+  avatarInput.addEventListener('change', function (e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!['image/png', 'image/jpeg'].includes(file.type)) {
+      alert('请上传 png 或 jpeg 格式的图片！');
+      return;
+    }
+    alert('正在上传头像...');
+    const formData = new FormData();
+    formData.append('file', file);
+    const token = localStorage.getItem('token');
+    axios.post('/file/uploadImg', formData, {
+      headers: {
+        'token': token,
+        'Content-Type': 'multipart/form-data'
+      }
+    }).then(res => {
+      console.log('上传接口返回：', res.data);
+      const imageUrl = res.data.data;
+      if (!imageUrl || !imageUrl.startsWith('http')) {
+        alert('上传失败：' + imageUrl);
+        return;
+      }
+      axios.post('/user/modify/userInfo', {
+        avatar: imageUrl
+      }, {
+        headers: { token: token }
+      }).then(() => {
+        alert('头像更新成功！');
+        editAvatorImgEl.style.backgroundImage = `url(${imageUrl})`;
+        const i = document.querySelector('.adit-avator i');
+        const homeimg = document.querySelector('.user .avator-img');
+        homeimg.style.backgroundImage = `url(${imageUrl})`;
+        i.classList.add('adit-avator-i-dismiss');
+      }).catch(() => {
+        alert('更新头像信息失败，请重试');
+      });
+    }).catch(() => {
+      alert('图片上传失败，请检查网络或接口');
+    });
+    avatarInput.value = '';
+  });
+
+  const i = document.querySelector('.adit-avator i');
+  if (editAvatorImgEl.style.backgroundImage !== null) {
+    i.classList.add('adit-avator-i-dismiss');
+  }
+
+  // 退出登录功能
+  const logoutBtn = document.querySelector(".log-out-btn");
+  logoutBtn.addEventListener("click", function () {
+    localStorage.clear();
+    alert("已退出登录");
+    location.href = "login.html";
+  });
+
+  // 10秒后自动校验登录状态
+  function checkLoginStatus() {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("登录状态已过期，请重新登录");
+      location.href = "login.html";
+      return;
+    }
+    axios.get("/user/isLogin", {
+      headers: { token: token }
+    }).then(res => {
+      if (res.data.code === 200 && res.data.data === false) {
+        localStorage.removeItem("token");
+        alert("登录状态已过期，请重新登录");
+        location.href = "login.html";
+      }
+    }).catch(() => {
+      localStorage.removeItem("token");
+      alert("登录状态异常，请重新登录");
+      location.href = "login.html";
+    });
+  }
+  setTimeout(checkLoginStatus, 10000);
+
+  // 加载自己的文章列表（已修复数组报错 + blob报错）
+  let articlePage = 1;
+  const articlePageSize = 10;
+  let articleHasMore = true;
+
+  function loadMyArticles(page = 1) {
+    if (!articleHasMore && page !== 1) return;
+    const token = localStorage.getItem("token");
+    if (!token) return alert("请先登录");
+
+    axios.get("/article/me", {
+      headers: { token: token },
+      params: { page, pageSize: articlePageSize }
+    }).then(res => {
+      const records = res.data.data.records || [];
+      const articleListEl = document.querySelector(".article-delete-list");
+
+      if (page === 1) {
+        articleListEl.innerHTML = "";
+        articleHasMore = true;
+      }
+
+      if (records.length === 0 && page === 1) {
+        articleListEl.innerHTML = `<div style='padding:50px;text-align:center;color:#999'>暂无文章</div>`;
+        articleHasMore = false;
+        return;
+      }
+
+      records.forEach(article => {
+        let imgUrl = "";
+
+        // 兼容 字符串 / 数组 格式
+        if (article.img) {
+          if (typeof article.img === "string") {
+            imgUrl = article.img;
+          } else if (Array.isArray(article.img) && article.img.length > 0) {
+            imgUrl = article.img[0];
+          }
+        }
+
+        let coverHtml = "";
+        // 只渲染有效图片，过滤 blob / 空
+        if (imgUrl && imgUrl !== "" && !imgUrl.startsWith("blob:")) {
+          coverHtml = `
+        <div style="width:60px;height:60px;border-radius:8px;
+                    background-image:url(${imgUrl});
+                    background-size:cover;
+                    background-position:center;">
+        </div>`;
+        }
+
+        const createTime = article.createTime
+          ? new Date(article.createTime).toLocaleString()
+          : "未知时间";
+
+        articleListEl.innerHTML += `
+      <div class="article-delete-item" data-article-id="${article.id}">
+        <div class="article-delete-item-left">
+          <p>${article.title || "无标题"}</p>
+          <p>${createTime}</p>
+          <p>${article.viewed || 0}阅读 ${article.liked || 0}点赞</p>
+        </div>
+        <div class="article-delete-item-right">
+          ${coverHtml}
+          <i class="iconfont icon-shanchu" data-delete-id="${article.id}"></i>
+        </div>
+      </div>`;
+      });
+
+      if (records.length < articlePageSize) {
+        articleHasMore = false;
+      } else {
+        articlePage++;
+      }
+
+      bindDeleteEvents();
+    }).catch(err => {
+      console.error("加载文章失败", err);
+      alert("加载文章失败");
+    });
+  }
+
+  // 给删除按钮绑定点击事件
+  function bindDeleteEvents() {
+    document.querySelectorAll(".article-delete-item-right i").forEach(el => {
+      el.onclick = function (e) {
+        e.stopPropagation();
+        const articleId = this.dataset.deleteId;
+        if (confirm("确定要删除这篇文章吗？删除后无法恢复！")) {
+          deleteArticle(articleId);
+        }
+      };
+    });
+  }
+
+  // 删除文章功能
+  function deleteArticle(articleId) {
+    const token = localStorage.getItem("token");
+    if (!token) return alert("请先登录");
+
+    axios.post("/article/delete", null, {
+      headers: { token: token },
+      params: { id: articleId }
+    }).then(res => {
+      if (res.data.code === 200) {
+        alert("删除成功！");
+        articlePage = 1;
+        loadMyArticles(1);
+      } else {
+        alert("删除失败：" + res.data.msg);
+      }
+    }).catch(() => {
+      alert("删除失败，请检查网络或权限");
+    });
+  }
 </script>
-
-
 
 </html>

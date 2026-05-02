@@ -565,9 +565,9 @@
   width: 20%;
 }
 
-.searchuser-result-list-right button {
+.searchuser-result-list-item-right .follow-btn {
   height: 30px;
-  width: 100%;
+  width: 70px;
   background-color: #EDEDED;
   border-radius: 15px;
   font-size: 16px;
@@ -592,4 +592,243 @@
 .active-dismiss {
   transform: translateX(100%);
   z-index: 5 !important;
+}
+
+.publish-article {
+  width: 100%;
+  height: 100%;
+  background: transparent !important;
+}
+
+.publish-article-type-top {
+  width: 100%;
+  height: 50%;
+  /* 占上半屏 */
+  background: rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
+  cursor: pointer;
+}
+
+.publish-article-type-bottom {
+  height: 50%;
+  width: 100%;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.publish-article .close-icon {
+  width: 100%;
+  height: 5%;
+  background-color: #fff;
+}
+
+.publish-article .close-icon i {
+  font-size: 25px;
+  margin-left: 45%;
+  transform: rotate(90deg);
+  display: inline-block;
+}
+
+.publish-article .publish-article-content {
+  width: 100%;
+  height: 15%;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+}
+
+.publish-article .publish-article-content img {
+  width: 40px;
+  height: 40px;
+  margin-left: 3%;
+  margin-top: 10%;
+  border-radius: 50%;
+}
+
+.publish-article .publish-article-content p#publish-username {
+  font-size: 20px;
+  margin-left: 2%;
+  margin-top: 10%;
+  color: #969696;
+  width: 60%;
+}
+
+
+.publish-article .publish-article-content i {
+  font-size: 20px;
+  margin-top: 10%;
+}
+
+.publish-article .publish-article-content .caogao-p {
+  font-size: 16px;
+  margin-left: 2%;
+  margin-top: 10%;
+  color: #565460;
+  line-height: 20px;
+}
+
+
+.publish-article .publish-article-type {
+  width: 100%;
+  height: 30%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10%;
+}
+
+.publish-article-type .type1,
+.publish-article-type .type2 {
+  width: 45%;
+  height: 100px;
+  border-radius: 10px;
+}
+
+.publish-article-type .type1 {
+  background-color: #FF4219;
+  margin-left: 2%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.type1 div:first-child,
+.type1 div:last-child,
+.type2 div:first-child,
+.type2 div:last-child {
+  width: 50%;
+  height: 100%;
+
+}
+
+.type1 .type1-left p:first-child,
+.type2 .type2-left p:first-child {
+  margin-top: 20px;
+  font-size: 15px;
+  color: #fff;
+  line-height: 30px;
+  text-align: top;
+  margin-left: 5px;
+}
+
+.type1 .type1-left p:last-child,
+.type2 .type2-left p:last-child {
+  font-size: 10px;
+  color: #fff;
+  line-height: 30px;
+  text-align: center;
+  margin-left: 2px;
+
+}
+
+.type1 .type1-right i,
+.type2 .type2-right i {
+  width: 50px;
+  height: 50px;
+  font-size: 50px !important;
+  color: #fff;
+  line-height: 100px;
+  text-align: center;
+  margin-left: 20px;
+  margin-top: 30px;
+}
+
+.type1 .type1-right p:last-child,
+.type2 .type2-right p:last-child {
+  font-size: 16px;
+  color: #fff;
+  line-height: 20px;
+}
+
+.type1 .type1-right i,
+.type2 .type2-right i {
+  font-size: 20px;
+  margin-top: 10%;
+}
+
+
+
+.publish-article-type .type2 {
+  background-color: #3B3F49;
+  margin-right: 2%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.publish-article .publish-footer {
+  width: 100%;
+  height: 20%;
+  background-color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.publish-footer .publish-footer-item {
+  width: 40%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.publish-footer .publish-footer-item div {
+  width: 40px !important;
+  height: 70px !important;
+  border-radius: 50%;
+  background-color: #EDEDED;
+  position: relative;
+}
+
+.publish-footer .publish-footer-item i {
+  font-size: 30px;
+  color: #969696;
+  line-height: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.publish-footer .publish-footer-item p {
+  font-size: 16px;
+  color: #969696;
+  line-height: 20px;
+  margin-top: 8px;
+}
+
+
+
+
+
+
+
+.slide-panel {
+  position: fixed;
+  /* 固定在屏幕上 */
+  bottom: 0;
+  /* 贴底部 */
+  left: 0;
+  width: 100%;
+  /* 高度占屏幕70% */
+  background: white;
+  /* border-radius: 20px 20px 0 0; */
+  z-index: 999;
+  /* 浮在最上面 */
+
+  /* 关键：藏在屏幕外 + 平滑动画 */
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+/* 3. 显示状态：滑上来 */
+.slide-panel.show {
+  transform: translateY(0);
 }

@@ -72,15 +72,25 @@
 
 .article .acthor-info-name {
   height: 100%;
-  margin-right: 210px;
+
+  margin-right: 130px;
 }
 
-.article .acthor-info-name p {
+.article .acthor-info-name .article-username {
   font-size: 13px;
   text-align: left;
   line-height: 13px;
   margin-left: 5px;
   margin-top: 1px;
+}
+
+.article .acthor-info-name .article-type p {
+  font-size: 12px;
+  text-align: left;
+  line-height: 12px;
+  margin-left: 5px;
+  margin-top: 1px;
+  width: 80px;
 }
 
 .article .acthor-info-name .article-type {
@@ -114,7 +124,7 @@
   border-radius: 15px;
   margin-right: 10px;
   text-align: center;
-  margin-right: 10px;
+  margin-left: 50px;
 }
 
 .article .footer {
@@ -203,4 +213,236 @@
 
 .footer-right ul li i.icon-shoucang.collected {
   color: #ff4313;
+}
+
+.empty {
+  width: 100%;
+  height: 10%;
+}
+
+.comment {
+  height: 90vh;
+  position: relative;
+  border-top: 1px solid black;
+}
+
+
+.comment-header {
+  width: 100%;
+  height: 10%;
+  position: absolute;
+  top: 0;
+}
+
+.comment-header h2 {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  line-height: 40px;
+}
+
+.comment-header i {
+  font-size: 20px;
+  line-height: 40px;
+  text-align: center;
+  color: #333;
+  position: absolute;
+  top: 2.6px;
+  left: 15px;
+}
+
+.comment-content {
+  width: 100%;
+}
+
+.comment-content img {
+  width: 100%;
+  height: 40%;
+}
+
+.comment-content .no-comment {
+  width: 100%;
+  font-size: 16px;
+  color: #565460;
+  line-height: 40px;
+  text-align: center;
+}
+
+.comment-item {
+  width: 100%;
+  border-bottom: 1px solid #F4F4F4;
+}
+
+.comment-item-top {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.comment-item-top img {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  text-align: left;
+  margin-left: 1px;
+
+}
+
+.comment-item-top div {
+  width: 75%;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+}
+
+.comment-item-top div p {
+  font-size: 16px;
+  color: #333;
+  line-height: 20px;
+  text-align: left;
+  margin-left: 10px;
+}
+
+.comment-item-bottom {
+  width: 80%;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.comment-item-bottom p {
+  font-size: 16px;
+  color: #565460;
+  line-height: 40px;
+  text-align: left;
+  margin-left: 20px;
+}
+
+.comment-item-top i {
+  width: 30px;
+  font-size: 20px;
+  line-height: 40px;
+  text-align: center;
+
+}
+
+.second-comment {
+  width: 90%;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-left: 10%;
+}
+
+.second-comment p {
+  font-size: 16px;
+  color: #333;
+  line-height: 20px;
+  text-align: left;
+}
+
+.second-comment i {
+  font-size: 20px;
+  line-height: 20px;
+  text-align: center;
+  margin-right: 18.3px;
+}
+
+.comment-item-bottom {
+  width: 80%;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.comment-footer {
+  width: 100%;
+  height: 10%;
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid #F4F4F4;
+  border-bottom: 1px solid #F4F4F4;
+}
+
+.comment-footer img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin: 10px auto;
+  margin-left: 10px;
+}
+
+.comment-footer div {
+  margin-left: 10px;
+  width: 80%;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+}
+
+.comment-footer div p {
+  font-size: 16px;
+  color: #565460;
+  line-height: 40px;
+  text-align: left
+}
+
+.comment-typepart {
+  width: 100%;
+  height: 20vh;
+  border-top: 1px solid black;
+  z-index: 1000;
+}
+
+.comment-typepart textarea {
+  width: 84%;
+  height: 75%;
+  margin-left: 7%;
+  outline: none;
+}
+
+.comment-typepart div {
+  width: 40px;
+  height: 30px;
+  margin-left: 330px;
+  text-align: right;
+}
+
+.comment-typepart div p {
+  font-size: 16px;
+  color: #333;
+  line-height: 30px;
+  text-align: center;
+}
+
+.slide-panel {
+  position: fixed;
+  /* 固定在屏幕上 */
+  bottom: 0;
+  /* 贴底部 */
+  left: 0;
+  width: 100%;
+  /* 高度占屏幕70% */
+  background: white;
+  /* border-radius: 20px 20px 0 0; */
+  z-index: 999;
+  /* 浮在最上面 */
+
+  /* 关键：藏在屏幕外 + 平滑动画 */
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+/* 3. 显示状态：滑上来 */
+.slide-panel.show {
+  transform: translateY(0);
 }
